@@ -1,26 +1,27 @@
 import pygame
 
+
 class Warrior1(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('warrior_1.png').convert_alpha()
-        self.rect = self.image.get_rect(topleft=(400, 200))
+        self.rect = self.image.get_rect(topleft=(100, 250))
 
         self.reload = 0
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_UP] and self.rect.top > 201:
             self.rect.y -= 2
-        if keys[pygame.K_DOWN]:
+        if keys[pygame.K_DOWN] and self.rect.bottom < 392 - 9:
             self.rect.y += 2
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] and self.rect.left > 9:
             self.rect.x -= 2
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] and self.rect.right < 512 - 9:
             self.rect.x += 2
 
-        if keys[pygame.K_SPACE] and not(self.reload):
+        if keys[pygame.K_SPACE] and not self.reload:
             bullets_group.add(Bullet(self.rect.x, self.rect.y))
             self.reload = 10
 
@@ -30,12 +31,12 @@ class Warrior1(pygame.sprite.Sprite):
         if self.reload:
             self.reload -= 1
 
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, warrior_x, warrior_y):
         super().__init__()
         self.image = pygame.image.load('bullet_2.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
-
 
     def update(self):
         self.rect.y -= 4
@@ -47,12 +48,12 @@ class Bullet(pygame.sprite.Sprite):
 
 pygame.init()
 
-width = 800
-height = 400
+width = 512
+height = 392
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Game')
 clock = pygame.time.Clock()
-
+battlefield = pygame.image.load('battlefield2.png').convert_alpha()
 
 screen.fill('#FFFFFF')
 
@@ -71,6 +72,8 @@ while True:
             exit()
 
     screen.fill('#FFFFFF')
+
+    screen.blit(battlefield, (0, 0))
 
     bullets_group.draw(screen)
     bullets_group.update()
