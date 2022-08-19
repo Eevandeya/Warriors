@@ -5,21 +5,23 @@ class BottomWarrior(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('images/red_warrior.png').convert_alpha()
-        self.rect = self.image.get_rect(topleft=(100, 250))
+        self.rect = self.image.get_rect(topleft=(100, 400))
 
-        self.reload = 0
+    reload = 0
+    borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
+    speed = 2
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP] and self.rect.top > 201:
-            self.rect.y -= 2
-        if keys[pygame.K_DOWN] and self.rect.bottom < 392 - 9:
-            self.rect.y += 2
-        if keys[pygame.K_LEFT] and self.rect.left > 9:
-            self.rect.x -= 2
-        if keys[pygame.K_RIGHT] and self.rect.right < 512 - 9:
-            self.rect.x += 2
+        if keys[pygame.K_UP] and self.rect.top > self.borders['top']:
+            self.rect.y -= self.speed
+        if keys[pygame.K_DOWN] and self.rect.bottom < self.borders['bottom']:
+            self.rect.y += self.speed
+        if keys[pygame.K_LEFT] and self.rect.left > self.borders['left']:
+            self.rect.x -= self.speed
+        if keys[pygame.K_RIGHT] and self.rect.right < self.borders['right']:
+            self.rect.x += self.speed
 
         if keys[pygame.K_RCTRL] and not self.reload:
             red_bullets_group.add(RedBullet(self.rect.x, self.rect.y))
@@ -51,21 +53,23 @@ class TopWarrior(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('images/blue_warrior.png').convert_alpha()
-        self.rect = self.image.get_rect(topleft=(100, 100))
+        self.rect = self.image.get_rect(topleft=(100, 250))
 
-        self.reload = 0
+    reload = 0
+    borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
+    speed = 2
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_w] and self.rect.top > 9:
-            self.rect.y -= 2
-        if keys[pygame.K_s] and self.rect.bottom < 201 - 9:
-            self.rect.y += 2
-        if keys[pygame.K_a] and self.rect.left > 9:
-            self.rect.x -= 2
-        if keys[pygame.K_d] and self.rect.right < 512 - 9:
-            self.rect.x += 2
+        if keys[pygame.K_w] and self.rect.top > self.borders['top']:
+            self.rect.y -= self.speed
+        if keys[pygame.K_s] and self.rect.bottom < self.borders['bottom']:
+            self.rect.y += self.speed
+        if keys[pygame.K_a] and self.rect.left > self.borders['left']:
+            self.rect.x -= self.speed
+        if keys[pygame.K_d] and self.rect.right < self.borders['right']:
+            self.rect.x += self.speed
 
         if keys[pygame.K_g] and not self.reload:
             blue_bullets_group.add(BlueBullet(self.rect.x, self.rect.y))
@@ -123,7 +127,7 @@ def update_explosions():
 pygame.init()
 
 width = 512
-height = 392
+height = 392 + 300
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Game')
 
@@ -131,8 +135,16 @@ clock = pygame.time.Clock()
 
 battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
 explosion_image = pygame.image.load('images/explosion3.png').convert_alpha()
+full_heart = pygame.image.load('images/full_heart.png').convert_alpha()
+full_bullet = pygame.image.load('images/full_bullet_2.png')
+
+# a = 48
+# full_bullet = pygame.transform.scale(full_bullet, (a, a))
+# full_haerd = pygame.transform.scale(full_haerd, (a, a))
+
 
 screen.fill('#FFFFFF')
+
 
 w1 = pygame.sprite.GroupSingle()
 w1.add(BottomWarrior())
@@ -150,9 +162,32 @@ while True:
             pygame.quit()
             exit()
 
-    screen.fill('#FFFFFF')
+    screen.fill('#dcdcdc')
 
-    screen.blit(battlefield, (0, 0))
+    screen.blit(battlefield, (0, 150))
+
+
+    gap_between_hearts = 64
+    gap_between_bullets = 42
+
+    heart_indent = 20
+    bullet_indent = 270
+
+    top_line = 43
+    bottom_line = 585
+
+
+    for i in range(5):
+        screen.blit(full_bullet, (i*gap_between_bullets + bullet_indent, top_line))
+
+    for i in range(3):
+        screen.blit(full_heart, (i*gap_between_hearts + heart_indent, top_line))
+
+    for i in range(5):
+        screen.blit(full_bullet, (i*gap_between_bullets + bullet_indent, bottom_line))
+
+    for i in range(3):
+        screen.blit(full_heart, (i*gap_between_hearts + heart_indent, bottom_line))
 
     red_bullets_group.draw(screen)
     red_bullets_group.update()
