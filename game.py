@@ -25,6 +25,7 @@ class BottomWarrior(pygame.sprite.Sprite):
 
         if keys[pygame.K_RCTRL] and not self.reload:
             red_bullets_group.add(RedBullet(self.rect.x, self.rect.y))
+            shoot_sound.play()
             self.reload = 10
 
     def update(self):
@@ -41,7 +42,7 @@ class RedBullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
 
     def update(self):
-        self.rect.y -= 4
+        self.rect.y -= 6
         self.destroy()
 
     def destroy(self):
@@ -73,6 +74,7 @@ class TopWarrior(pygame.sprite.Sprite):
 
         if keys[pygame.K_g] and not self.reload:
             blue_bullets_group.add(BlueBullet(self.rect.x, self.rect.y))
+            shoot_sound.play()
             self.reload = 10
 
     def update(self):
@@ -89,7 +91,7 @@ class BlueBullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
 
     def update(self):
-        self.rect.y += 4
+        self.rect.y += 6
 
     def destroy(self):
         if self.rect.y > 512 + 30:
@@ -114,6 +116,8 @@ class Explosion:
 def kill_bullet_and_spawn_explosion():
     for bullet in hit_bullets:
         explosions.append(Explosion(bullet.rect.x, bullet.rect.y))
+
+        hit_sound.play()
         bullet.kill()
 
 
@@ -138,9 +142,11 @@ explosion_image = pygame.image.load('images/explosion3.png').convert_alpha()
 full_heart = pygame.image.load('images/full_heart.png').convert_alpha()
 full_bullet = pygame.image.load('images/full_bullet_2.png')
 
-# a = 48
-# full_bullet = pygame.transform.scale(full_bullet, (a, a))
-# full_haerd = pygame.transform.scale(full_haerd, (a, a))
+hit_sound = pygame.mixer.Sound('sounds/hit.wav')
+shoot_sound = pygame.mixer.Sound('sounds/shoot.wav')
+
+hit_sound.set_volume(0.1)
+shoot_sound.set_volume(0.1)
 
 
 screen.fill('#FFFFFF')
@@ -166,7 +172,6 @@ while True:
 
     screen.blit(battlefield, (0, 150))
 
-
     gap_between_hearts = 64
     gap_between_bullets = 42
 
@@ -175,7 +180,6 @@ while True:
 
     top_line = 43
     bottom_line = 585
-
 
     for i in range(5):
         screen.blit(full_bullet, (i*gap_between_bullets + bullet_indent, top_line))
