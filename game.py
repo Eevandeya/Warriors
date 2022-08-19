@@ -1,7 +1,7 @@
 import pygame
 
 
-class BottomWarriror(pygame.sprite.Sprite):
+class BottomWarrior(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('images/red_warrior.png').convert_alpha()
@@ -40,12 +40,14 @@ class RedBullet(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y -= 4
+        self.destroy()
 
     def destroy(self):
         if self.rect.y <= -30:
             self.kill()
 
-class TopWarriror(pygame.sprite.Sprite):
+
+class TopWarrior(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load('images/blue_warrior.png').convert_alpha()
@@ -75,6 +77,7 @@ class TopWarriror(pygame.sprite.Sprite):
         if self.reload:
             self.reload -= 1
 
+
 class BlueBullet(pygame.sprite.Sprite):
     def __init__(self, warrior_x, warrior_y):
         super().__init__()
@@ -88,25 +91,58 @@ class BlueBullet(pygame.sprite.Sprite):
         if self.rect.y > 512 + 30:
             self.kill()
 
+
+class Explosion:
+    def __init__(self, x, y):
+        self.x = x - 6
+        self.y = y - 3
+        self.lifetime = 10
+
+    def update(self):
+        if self.lifetime == 0:
+            return True
+        else:
+            self.lifetime -= 1
+            screen.blit(explosion_image, (self.x, self.y))
+            return False
+
+
+def kill_bullet_and_spawn_explosion():
+    for bullet in hit_bullets:
+        explosions.append(Explosion(bullet.rect.x, bullet.rect.y))
+        bullet.kill()
+
+
+def update_explosions():
+    for explosion in explosions:
+        isdead = explosion.update()
+        if isdead:
+            explosions.remove(explosion)
+
+
 pygame.init()
 
 width = 512
 height = 392
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Game')
+
 clock = pygame.time.Clock()
+
 battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
+explosion_image = pygame.image.load('images/explosion3.png').convert_alpha()
 
 screen.fill('#FFFFFF')
 
 w1 = pygame.sprite.GroupSingle()
-w1.add(BottomWarriror())
+w1.add(BottomWarrior())
 
 w2 = pygame.sprite.GroupSingle()
-w2.add(TopWarriror())
+w2.add(TopWarrior())
 
 red_bullets_group = pygame.sprite.Group()
 blue_bullets_group = pygame.sprite.Group()
+explosions = []
 
 while True:
     for event in pygame.event.get():
@@ -129,6 +165,15 @@ while True:
 
     w2.draw(screen)
     w2.update()
+
+    hit_bullets = pygame.sprite.spritecollide(w2.sprite, red_bullets_group, False) + \
+                  pygame.sprite.spritecollide(w1.sprite, blue_bullets_group, False)
+
+    if hit_bullets:
+        kill_bullet_and_spawn_explosion()
+
+    if explosions:
+        update_explosions()
 
     pygame.display.update()
     clock.tick(60)
