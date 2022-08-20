@@ -8,11 +8,22 @@ class BottomWarrior(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(100, 400))
 
         self.hearts = [full_heart, full_heart, full_heart]
+        self.bullets_list = [full_bullet for _ in range(5)]
 
-    reload = 0
+    # Задержка между выстрелами
+    fire_delay = 0
+
+    # Задержка между выстрелами и перезарядкой
+    # (Чтобы началась перезарядка, нужно подождать, не стреляя)
+    reload_delay = 0
+
+    # Перезарядка патрон
+    ammo_reload = 0
+
     borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
     speed = 2
     heals = 3
+    ammo = 5
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
@@ -26,10 +37,12 @@ class BottomWarrior(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT] and self.rect.right < self.borders['right']:
             self.rect.x += self.speed
 
-        if keys[pygame.K_RCTRL] and not self.reload:
+        if keys[pygame.K_RCTRL] and not self.fire_delay and self.ammo:
+            self.ammo -= 1
             red_bullets_group.add(RedBullet(self.rect.x, self.rect.y))
             shoot_sound.play()
-            self.reload = 10
+            self.fire_delay = 10
+            self.reload_delay = 10
 
     def do_damage(self):
         for _ in blue_hit_bullets:
@@ -41,12 +54,41 @@ class BottomWarrior(pygame.sprite.Sprite):
         for i, heart in enumerate(self.hearts):
             screen.blit(heart, (i * gap_between_hearts + heart_indent, bottom_line))
 
+    def display_bullets(self):
+        number = 0
+        for i in range(self.ammo):
+            screen.blit(full_bullet, (number * gap_between_bullets + bullet_indent, bottom_line))
+            number += 1
+        for i in range(5 - number):
+            screen.blit(empty_bullet, (number * gap_between_bullets + bullet_indent, bottom_line))
+            number += 1
+
+    def reload(self):
+
+        # Проверка на то, что выдержана задержка между выстрелом и перезарядкой
+        if self.reload_delay:
+            self.reload_delay -= 1
+        else:
+
+            # Проверка на то, что патрон меньше 5
+            if self.ammo < 5:
+
+                # Перезарядка
+                self.ammo_reload += 1
+
+                # Увеличение патрон, если перезарядка на нужном уровне
+                if self.ammo_reload >= 30:
+                    self.ammo += 1
+                    self.ammo_reload = 0
+
     def update(self):
         self.warrior_control()
         self.display_heals()
+        self.display_bullets()
+        self.reload()
 
-        if self.reload:
-            self.reload -= 1
+        if self.fire_delay:
+            self.fire_delay -= 1
 
 
 class RedBullet(pygame.sprite.Sprite):
@@ -71,10 +113,20 @@ class TopWarrior(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft=(100, 250))
         self.hearts = [full_heart, full_heart, full_heart]
 
-    reload = 0
+    # Задержка между выстрелами
+    fire_delay = 0
+
+    # Задержка между выстрелами и перезарядкой
+    # (Чтобы началась перезарядка, нужно подождать, не стреляя)
+    reload_delay = 0
+
+    # Перезарядка патрон
+    ammo_reload = 0
+
     borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
     speed = 2
     heals = 3
+    ammo = 5
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
@@ -88,10 +140,12 @@ class TopWarrior(pygame.sprite.Sprite):
         if keys[pygame.K_d] and self.rect.right < self.borders['right']:
             self.rect.x += self.speed
 
-        if keys[pygame.K_g] and not self.reload:
+        if keys[pygame.K_g] and not self.fire_delay and self.ammo:
             blue_bullets_group.add(BlueBullet(self.rect.x, self.rect.y))
+            self.ammo -= 1
             shoot_sound.play()
-            self.reload = 10
+            self.fire_delay = 10
+            self.reload_delay = 10
 
     def do_damage(self):
         for _ in red_hit_bullets:
@@ -103,12 +157,41 @@ class TopWarrior(pygame.sprite.Sprite):
         for i, heart in enumerate(self.hearts):
             screen.blit(heart, (i * gap_between_hearts + heart_indent, top_line))
 
+    def display_bullets(self):
+        number = 0
+        for i in range(self.ammo):
+            screen.blit(full_bullet, (number * gap_between_bullets + bullet_indent, top_line))
+            number += 1
+        for i in range(5 - number):
+            screen.blit(empty_bullet, (number * gap_between_bullets + bullet_indent, top_line))
+            number += 1
+
+    def reload(self):
+
+        # Проверка на то, что выдержана задержка между выстрелом и перезарядкой
+        if self.reload_delay:
+            self.reload_delay -= 1
+        else:
+
+            # Проверка на то, что патрон меньше 5
+            if self.ammo < 5:
+
+                # Перезарядка
+                self.ammo_reload += 1
+
+                # Увеличение патрон, если перезарядка на нужном уровне
+                if self.ammo_reload >= 30:
+                    self.ammo += 1
+                    self.ammo_reload = 0
+
     def update(self):
         self.warrior_control()
         self.display_heals()
+        self.display_bullets()
+        self.reload()
 
-        if self.reload:
-            self.reload -= 1
+        if self.fire_delay:
+            self.fire_delay -= 1
 
 
 class BlueBullet(pygame.sprite.Sprite):
@@ -167,6 +250,7 @@ battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
 full_heart = pygame.image.load('images/full_heart.png').convert_alpha()
 empty_heart = pygame.image.load('images/empty_heart.png').convert_alpha()
 full_bullet = pygame.image.load('images/full_bullet_2.png')
+empty_bullet = pygame.image.load('images/empty_bullet_2.png').convert_alpha()
 
 hit_sound = pygame.mixer.Sound('sounds/hit.wav')
 shoot_sound = pygame.mixer.Sound('sounds/shoot.wav')
@@ -178,6 +262,15 @@ explosion_images = (explosion_frame1, explosion_frame2, explosion_frame3, explos
 
 hit_sound.set_volume(0.1)
 shoot_sound.set_volume(0.1)
+
+gap_between_hearts = 64
+gap_between_bullets = 42
+
+heart_indent = 20
+bullet_indent = 270
+
+top_line = 43
+bottom_line = 585
 
 
 screen.fill('#FFFFFF')
@@ -202,29 +295,6 @@ while True:
     screen.fill('#dcdcdc')
 
     screen.blit(battlefield, (0, 150))
-
-    # ---- ВИЗУАЛ ------
-    gap_between_hearts = 64
-    gap_between_bullets = 42
-
-    heart_indent = 20
-    bullet_indent = 270
-
-    top_line = 43
-    bottom_line = 585
-
-    for j in range(5):
-        screen.blit(full_bullet, (j*gap_between_bullets + bullet_indent, top_line))
-
-    # for i in range(3):
-    #     screen.blit(full_heart, (i*gap_between_hearts + heart_indent, top_line))
-
-    for j in range(5):
-        screen.blit(full_bullet, (j*gap_between_bullets + bullet_indent, bottom_line))
-
-    # for i in range(3):
-    #     screen.blit(full_heart, (i*gap_between_hearts + heart_indent, bottom_line))
-    # ----------------------------------------
 
     red_bullets_group.draw(screen)
     red_bullets_group.update()
