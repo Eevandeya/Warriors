@@ -129,14 +129,14 @@ class Explosion:
     def __init__(self, x, y):
         self.x = x - 6
         self.y = y - 3
-        self.lifetime = 10
+        self.lifetime = 0
 
     def update(self):
-        if self.lifetime == 0:
+        if self.lifetime == 14:
             return True
         else:
-            self.lifetime -= 1
-            screen.blit(explosion_image, (self.x, self.y))
+            screen.blit(explosion_images[self.lifetime // 3], (self.x, self.y))
+            self.lifetime += 1
             return False
 
 
@@ -164,13 +164,17 @@ pygame.display.set_caption('Game')
 clock = pygame.time.Clock()
 
 battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
-explosion_image = pygame.image.load('images/explosion3.png').convert_alpha()
 full_heart = pygame.image.load('images/full_heart.png').convert_alpha()
 empty_heart = pygame.image.load('images/empty_heart.png').convert_alpha()
 full_bullet = pygame.image.load('images/full_bullet_2.png')
 
 hit_sound = pygame.mixer.Sound('sounds/hit.wav')
 shoot_sound = pygame.mixer.Sound('sounds/shoot.wav')
+
+explosion_frame1 = pygame.image.load('images/explosion_animation/frame1.png').convert_alpha()
+explosion_frame2 = pygame.image.load('images/explosion_animation/frame2.png').convert_alpha()
+explosion_frame3 = pygame.image.load('images/explosion_animation/frame3.png').convert_alpha()
+explosion_images = (explosion_frame1, explosion_frame2, explosion_frame3, explosion_frame2, explosion_frame1)
 
 hit_sound.set_volume(0.1)
 shoot_sound.set_volume(0.1)
