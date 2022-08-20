@@ -7,9 +7,12 @@ class BottomWarrior(pygame.sprite.Sprite):
         self.image = pygame.image.load('images/red_warrior.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=(100, 400))
 
+        self.hearts = [full_heart, full_heart, full_heart]
+
     reload = 0
     borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
     speed = 2
+    heals = 3
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
@@ -28,8 +31,19 @@ class BottomWarrior(pygame.sprite.Sprite):
             shoot_sound.play()
             self.reload = 10
 
+    def do_damage(self):
+        for _ in blue_hit_bullets:
+            self.heals -= 1
+            self.hearts.append(empty_heart)
+            self.hearts.pop(0)
+
+    def display_heals(self):
+        for i, heart in enumerate(self.hearts):
+            screen.blit(heart, (i * gap_between_hearts + heart_indent, bottom_line))
+
     def update(self):
         self.warrior_control()
+        self.display_heals()
 
         if self.reload:
             self.reload -= 1
@@ -55,10 +69,12 @@ class TopWarrior(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.image.load('images/blue_warrior.png').convert_alpha()
         self.rect = self.image.get_rect(topleft=(100, 250))
+        self.hearts = [full_heart, full_heart, full_heart]
 
     reload = 0
     borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
     speed = 2
+    heals = 3
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
@@ -77,8 +93,19 @@ class TopWarrior(pygame.sprite.Sprite):
             shoot_sound.play()
             self.reload = 10
 
+    def do_damage(self):
+        for _ in red_hit_bullets:
+            self.heals -= 1
+            self.hearts.append(empty_heart)
+            self.hearts.pop(0)
+
+    def display_heals(self):
+        for i, heart in enumerate(self.hearts):
+            screen.blit(heart, (i * gap_between_hearts + heart_indent, top_line))
+
     def update(self):
         self.warrior_control()
+        self.display_heals()
 
         if self.reload:
             self.reload -= 1
@@ -114,9 +141,8 @@ class Explosion:
 
 
 def kill_bullet_and_spawn_explosion():
-    for bullet in hit_bullets:
+    for bullet in red_hit_bullets + blue_hit_bullets:
         explosions.append(Explosion(bullet.rect.x, bullet.rect.y))
-
         hit_sound.play()
         bullet.kill()
 
@@ -140,6 +166,7 @@ clock = pygame.time.Clock()
 battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
 explosion_image = pygame.image.load('images/explosion3.png').convert_alpha()
 full_heart = pygame.image.load('images/full_heart.png').convert_alpha()
+empty_heart = pygame.image.load('images/empty_heart.png').convert_alpha()
 full_bullet = pygame.image.load('images/full_bullet_2.png')
 
 hit_sound = pygame.mixer.Sound('sounds/hit.wav')
@@ -152,11 +179,11 @@ shoot_sound.set_volume(0.1)
 screen.fill('#FFFFFF')
 
 
-w1 = pygame.sprite.GroupSingle()
-w1.add(BottomWarrior())
+red_warrior_group = pygame.sprite.GroupSingle()
+red_warrior_group.add(BottomWarrior())
 
-w2 = pygame.sprite.GroupSingle()
-w2.add(TopWarrior())
+blue_warrior_group = pygame.sprite.GroupSingle()
+blue_warrior_group.add(TopWarrior())
 
 red_bullets_group = pygame.sprite.Group()
 blue_bullets_group = pygame.sprite.Group()
@@ -172,6 +199,7 @@ while True:
 
     screen.blit(battlefield, (0, 150))
 
+    # ---- ВИЗУАЛ ------
     gap_between_hearts = 64
     gap_between_bullets = 42
 
@@ -181,17 +209,18 @@ while True:
     top_line = 43
     bottom_line = 585
 
-    for i in range(5):
-        screen.blit(full_bullet, (i*gap_between_bullets + bullet_indent, top_line))
+    for j in range(5):
+        screen.blit(full_bullet, (j*gap_between_bullets + bullet_indent, top_line))
 
-    for i in range(3):
-        screen.blit(full_heart, (i*gap_between_hearts + heart_indent, top_line))
+    # for i in range(3):
+    #     screen.blit(full_heart, (i*gap_between_hearts + heart_indent, top_line))
 
-    for i in range(5):
-        screen.blit(full_bullet, (i*gap_between_bullets + bullet_indent, bottom_line))
+    for j in range(5):
+        screen.blit(full_bullet, (j*gap_between_bullets + bullet_indent, bottom_line))
 
-    for i in range(3):
-        screen.blit(full_heart, (i*gap_between_hearts + heart_indent, bottom_line))
+    # for i in range(3):
+    #     screen.blit(full_heart, (i*gap_between_hearts + heart_indent, bottom_line))
+    # ----------------------------------------
 
     red_bullets_group.draw(screen)
     red_bullets_group.update()
@@ -199,17 +228,22 @@ while True:
     blue_bullets_group.draw(screen)
     blue_bullets_group.update()
 
-    w1.draw(screen)
-    w1.update()
+    red_warrior_group.draw(screen)
+    red_warrior_group.update()
 
-    w2.draw(screen)
-    w2.update()
+    blue_warrior_group.draw(screen)
+    blue_warrior_group.update()
 
-    hit_bullets = pygame.sprite.spritecollide(w2.sprite, red_bullets_group, False) + \
-                  pygame.sprite.spritecollide(w1.sprite, blue_bullets_group, False)
+    red_hit_bullets = pygame.sprite.spritecollide(blue_warrior_group.sprite, red_bullets_group, False)
+    blue_hit_bullets = pygame.sprite.spritecollide(red_warrior_group.sprite, blue_bullets_group, False)
 
-    if hit_bullets:
+    if red_hit_bullets:
         kill_bullet_and_spawn_explosion()
+        blue_warrior_group.sprite.do_damage()
+
+    if blue_hit_bullets:
+        kill_bullet_and_spawn_explosion()
+        red_warrior_group.sprite.do_damage()
 
     if explosions:
         update_explosions()
