@@ -1,14 +1,33 @@
 import pygame
 
 
-class BottomWarrior(pygame.sprite.Sprite):
-    def __init__(self):
+class Warrior(pygame.sprite.Sprite):
+    def __init__(self, game_side: str):
         super().__init__()
-        self.image = pygame.image.load('images/red_warrior.png').convert_alpha()
-        self.rect = self.image.get_rect(topleft=(100, 400))
 
         self.hearts = [full_heart, full_heart, full_heart]
-        self.bullets_list = [full_bullet for _ in range(5)]
+
+        if game_side == 'top':
+            self.borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
+            self.control_buttons = {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a,
+                                    'right': pygame.K_d, 'fire': pygame.K_g}
+            self.stats_line_level = TOP_LINE
+            self.is_top_side = True
+
+            self.image = pygame.image.load('images/blue_warrior.png').convert_alpha()
+            self.rect = self.image.get_rect(topleft=(100, 200))
+        elif game_side == 'bottom':
+            self.borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
+            self.control_buttons = {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT,
+                                    'right': pygame.K_RIGHT, 'fire': pygame.K_RCTRL}
+            self.stats_line_level = BOTTOM_LINE
+            self.is_top_side = False
+
+            self.image = pygame.image.load('images/red_warrior.png').convert_alpha()
+            self.rect = self.image.get_rect(topleft=(100, 400))
+        else:
+            print('Ошибка: неверно указан параметр game_side, при создании объекта класса Warrior. (top/bottom)')
+            exit()
 
     # Задержка между выстрелами
     fire_delay = 0
@@ -20,7 +39,6 @@ class BottomWarrior(pygame.sprite.Sprite):
     # Перезарядка патрон
     ammo_reload = 0
 
-    borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
     speed = 2
     heals = 3
     ammo = 5
@@ -28,39 +46,51 @@ class BottomWarrior(pygame.sprite.Sprite):
     def warrior_control(self):
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_UP] and self.rect.top > self.borders['top']:
+        if keys[self.control_buttons['up']] and self.rect.top > self.borders['top']:
             self.rect.y -= self.speed
-        if keys[pygame.K_DOWN] and self.rect.bottom < self.borders['bottom']:
+        if keys[self.control_buttons['down']] and self.rect.bottom < self.borders['bottom']:
             self.rect.y += self.speed
-        if keys[pygame.K_LEFT] and self.rect.left > self.borders['left']:
+        if keys[self.control_buttons['left']] and self.rect.left > self.borders['left']:
             self.rect.x -= self.speed
-        if keys[pygame.K_RIGHT] and self.rect.right < self.borders['right']:
+        if keys[self.control_buttons['right']] and self.rect.right < self.borders['right']:
             self.rect.x += self.speed
 
-        if keys[pygame.K_RCTRL] and not self.fire_delay and self.ammo:
-            self.ammo -= 1
-            red_bullets_group.add(RedBullet(self.rect.x, self.rect.y))
-            shoot_sound.play()
-            self.fire_delay = 10
-            self.reload_delay = 10
+        if not self.fire_delay and self.ammo:
+            if keys[self.control_buttons['fire']]:
+
+                self.ammo -= 1
+                shoot_sound.play()
+                self.fire_delay = 10
+                self.reload_delay = 10
+
+                if self.is_top_side:
+                    blue_bullets_group.add(BlueBullet(self.rect.x, self.rect.y))
+                else:
+                    red_bullets_group.add(RedBullet(self.rect.x, self.rect.y))
 
     def do_damage(self):
-        for _ in blue_hit_bullets:
-            self.heals -= 1
-            self.hearts.append(empty_heart)
-            self.hearts.pop(0)
+        if self.is_top_side:
+            for _ in red_hit_bullets:
+                self.heals -= 1
+                self.hearts.append(empty_heart)
+                self.hearts.pop(0)
+        else:
+            for _ in blue_hit_bullets:
+                self.heals -= 1
+                self.hearts.append(empty_heart)
+                self.hearts.pop(0)
 
     def display_heals(self):
         for i, heart in enumerate(self.hearts):
-            screen.blit(heart, (i * gap_between_hearts + heart_indent, bottom_line))
+            screen.blit(heart, (i * GAP_BETWEEN_HEARTS + HEART_INDENT, self.stats_line_level))
 
     def display_bullets(self):
         number = 0
         for i in range(self.ammo):
-            screen.blit(full_bullet, (number * gap_between_bullets + bullet_indent, bottom_line))
+            screen.blit(full_bullet, (number * GAP_BETWEEN_BULLETS + BULLET_INDENT, self.stats_line_level))
             number += 1
         for i in range(5 - number):
-            screen.blit(empty_bullet, (number * gap_between_bullets + bullet_indent, bottom_line))
+            screen.blit(empty_bullet, (number * GAP_BETWEEN_BULLETS + BULLET_INDENT, self.stats_line_level))
             number += 1
 
     def reload(self):
@@ -104,94 +134,6 @@ class RedBullet(pygame.sprite.Sprite):
     def destroy(self):
         if self.rect.y <= -30:
             self.kill()
-
-
-class TopWarrior(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.image.load('images/blue_warrior.png').convert_alpha()
-        self.rect = self.image.get_rect(topleft=(100, 250))
-        self.hearts = [full_heart, full_heart, full_heart]
-
-    # Задержка между выстрелами
-    fire_delay = 0
-
-    # Задержка между выстрелами и перезарядкой
-    # (Чтобы началась перезарядка, нужно подождать, не стреляя)
-    reload_delay = 0
-
-    # Перезарядка патрон
-    ammo_reload = 0
-
-    borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
-    speed = 2
-    heals = 3
-    ammo = 5
-
-    def warrior_control(self):
-        keys = pygame.key.get_pressed()
-
-        if keys[pygame.K_w] and self.rect.top > self.borders['top']:
-            self.rect.y -= self.speed
-        if keys[pygame.K_s] and self.rect.bottom < self.borders['bottom']:
-            self.rect.y += self.speed
-        if keys[pygame.K_a] and self.rect.left > self.borders['left']:
-            self.rect.x -= self.speed
-        if keys[pygame.K_d] and self.rect.right < self.borders['right']:
-            self.rect.x += self.speed
-
-        if keys[pygame.K_g] and not self.fire_delay and self.ammo:
-            blue_bullets_group.add(BlueBullet(self.rect.x, self.rect.y))
-            self.ammo -= 1
-            shoot_sound.play()
-            self.fire_delay = 10
-            self.reload_delay = 10
-
-    def do_damage(self):
-        for _ in red_hit_bullets:
-            self.heals -= 1
-            self.hearts.append(empty_heart)
-            self.hearts.pop(0)
-
-    def display_heals(self):
-        for i, heart in enumerate(self.hearts):
-            screen.blit(heart, (i * gap_between_hearts + heart_indent, top_line))
-
-    def display_bullets(self):
-        number = 0
-        for i in range(self.ammo):
-            screen.blit(full_bullet, (number * gap_between_bullets + bullet_indent, top_line))
-            number += 1
-        for i in range(5 - number):
-            screen.blit(empty_bullet, (number * gap_between_bullets + bullet_indent, top_line))
-            number += 1
-
-    def reload(self):
-
-        # Проверка на то, что выдержана задержка между выстрелом и перезарядкой
-        if self.reload_delay:
-            self.reload_delay -= 1
-        else:
-
-            # Проверка на то, что патрон меньше 5
-            if self.ammo < 5:
-
-                # Перезарядка
-                self.ammo_reload += 1
-
-                # Увеличение патрон, если перезарядка на нужном уровне
-                if self.ammo_reload >= 30:
-                    self.ammo += 1
-                    self.ammo_reload = 0
-
-    def update(self):
-        self.warrior_control()
-        self.display_heals()
-        self.display_bullets()
-        self.reload()
-
-        if self.fire_delay:
-            self.fire_delay -= 1
 
 
 class BlueBullet(pygame.sprite.Sprite):
@@ -247,8 +189,10 @@ pygame.display.set_caption('Game')
 clock = pygame.time.Clock()
 
 battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
+
 full_heart = pygame.image.load('images/full_heart.png').convert_alpha()
 empty_heart = pygame.image.load('images/empty_heart.png').convert_alpha()
+
 full_bullet = pygame.image.load('images/full_bullet_2.png')
 empty_bullet = pygame.image.load('images/empty_bullet_2.png').convert_alpha()
 
@@ -263,24 +207,18 @@ explosion_images = (explosion_frame1, explosion_frame2, explosion_frame3, explos
 hit_sound.set_volume(0.1)
 shoot_sound.set_volume(0.1)
 
-gap_between_hearts = 64
-gap_between_bullets = 42
-
-heart_indent = 20
-bullet_indent = 270
-
-top_line = 43
-bottom_line = 585
-
-
-screen.fill('#FFFFFF')
-
+GAP_BETWEEN_HEARTS = 64
+GAP_BETWEEN_BULLETS = 42
+HEART_INDENT = 20
+BULLET_INDENT = 270
+TOP_LINE = 43
+BOTTOM_LINE = 585
 
 red_warrior_group = pygame.sprite.GroupSingle()
-red_warrior_group.add(BottomWarrior())
+red_warrior_group.add(Warrior('bottom'))
 
 blue_warrior_group = pygame.sprite.GroupSingle()
-blue_warrior_group.add(TopWarrior())
+blue_warrior_group.add(Warrior('top'))
 
 red_bullets_group = pygame.sprite.Group()
 blue_bullets_group = pygame.sprite.Group()
