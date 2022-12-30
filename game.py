@@ -29,19 +29,21 @@ class Warrior(pygame.sprite.Sprite):
             print('Ошибка: неверно указан параметр game_side, при создании объекта класса Warrior. (top/bottom)')
             exit()
 
-    # Задержка между выстрелами
-    fire_delay = 0
+        # Задержка между выстрелами
+        self.fire_delay = 0
 
-    # Задержка между выстрелами и перезарядкой
-    # (Чтобы началась перезарядка, нужно подождать, не стреляя)
-    reload_delay = 0
+        # Задержка между выстрелами и перезарядкой
+        # (Чтобы началась перезарядка, нужно подождать, не стреляя)
+        self.reload_delay = 0
 
-    # Перезарядка патрон
-    ammo_reload = 0
+        # Перезарядка патрон
+        self.ammo_reload = 0
 
-    speed = 2
-    heals = 3
-    ammo = 5
+        self.speed = 2
+        self.heals = 3
+        self.ammo = 5
+
+        self.isAlive = True
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
@@ -112,10 +114,12 @@ class Warrior(pygame.sprite.Sprite):
                     self.ammo_reload = 0
 
     def update(self):
-        self.warrior_control()
-        self.display_heals()
+        if self.isAlive:
+            self.warrior_control()
+            self.reload()
+
         self.display_bullets()
-        self.reload()
+        self.display_heals()
 
         if self.fire_delay:
             self.fire_delay -= 1
@@ -150,7 +154,7 @@ class BlueBullet(pygame.sprite.Sprite):
             self.kill()
 
 
-class Explosion:
+class BulletExplosion:
     def __init__(self, x, y):
         self.x = x - 6
         self.y = y - 3
@@ -160,14 +164,30 @@ class Explosion:
         if self.lifetime == 14:
             return True
         else:
-            screen.blit(explosion_images[self.lifetime // 3], (self.x, self.y))
+            screen.blit(bullet_explosion_images[self.lifetime // 3], (self.x, self.y))
             self.lifetime += 1
             return False
 
 
+class PlayerExplosion:
+    def __init__(self, x, y):
+        self.x = x - 15
+        self.y = y - 15
+        self.lifetime = 0
+
+    def update(self):
+        if self.lifetime == 18 - 1:
+            return True
+        else:
+            screen.blit(player_explosion_images[self.lifetime // 3], (self.x, self.y))
+            self.lifetime += 1
+            return False
+
+
+
 def kill_bullet_and_spawn_explosion():
     for bullet in red_hit_bullets + blue_hit_bullets:
-        explosions.append(Explosion(bullet.rect.x, bullet.rect.y))
+        explosions.append(BulletExplosion(bullet.rect.x, bullet.rect.y))
         hit_sound.play()
         bullet.kill()
 
@@ -178,6 +198,10 @@ def update_explosions():
         if isdead:
             explosions.remove(explosion)
 
+
+def spawn_player_explosion(x, y):
+    explosions.append(PlayerExplosion(x, y))
+    explosion_sound.play()
 
 pygame.init()
 
@@ -198,14 +222,33 @@ empty_bullet = pygame.image.load('images/empty_bullet_2.png').convert_alpha()
 
 hit_sound = pygame.mixer.Sound('sounds/hit.wav')
 shoot_sound = pygame.mixer.Sound('sounds/shoot.wav')
+explosion_sound = pygame.mixer.Sound('sounds/explosion.wav')
 
-explosion_frame1 = pygame.image.load('images/explosion_animation/frame1.png').convert_alpha()
-explosion_frame2 = pygame.image.load('images/explosion_animation/frame2.png').convert_alpha()
-explosion_frame3 = pygame.image.load('images/explosion_animation/frame3.png').convert_alpha()
-explosion_images = (explosion_frame1, explosion_frame2, explosion_frame3, explosion_frame2, explosion_frame1)
+bullet_explosion_frame1 = pygame.image.load('images/bullet_explosion_animation/frame1.png').convert_alpha()
+bullet_explosion_frame2 = pygame.image.load('images/bullet_explosion_animation/frame2.png').convert_alpha()
+bullet_explosion_frame3 = pygame.image.load('images/bullet_explosion_animation/frame3.png').convert_alpha()
+bullet_explosion_images = (bullet_explosion_frame1,
+                           bullet_explosion_frame2,
+                           bullet_explosion_frame3,
+                           bullet_explosion_frame2,
+                           bullet_explosion_frame1)
+
+player_explosion_frame1 = pygame.image.load('images/player_explosion_animation/frame1.png').convert_alpha()
+player_explosion_frame2 = pygame.image.load('images/player_explosion_animation/frame2.png').convert_alpha()
+player_explosion_frame4 = pygame.image.load('images/player_explosion_animation/frame4.png').convert_alpha()
+player_explosion_frame5 = pygame.image.load('images/player_explosion_animation/frame5.png').convert_alpha()
+player_explosion_frame6 = pygame.image.load('images/player_explosion_animation/frame6.png').convert_alpha()
+player_explosion_images = [player_explosion_frame1,
+                           player_explosion_frame2,
+                           player_explosion_frame1,
+                           player_explosion_frame4,
+                           player_explosion_frame5,
+                           player_explosion_frame6]
+
 
 hit_sound.set_volume(0.1)
 shoot_sound.set_volume(0.1)
+explosion_sound.set_volume(0.3)
 
 GAP_BETWEEN_HEARTS = 64
 GAP_BETWEEN_BULLETS = 42
@@ -224,6 +267,8 @@ red_bullets_group = pygame.sprite.Group()
 blue_bullets_group = pygame.sprite.Group()
 explosions = []
 
+game_stage = 'battle'
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -240,22 +285,53 @@ while True:
     blue_bullets_group.draw(screen)
     blue_bullets_group.update()
 
-    red_warrior_group.draw(screen)
     red_warrior_group.update()
 
-    blue_warrior_group.draw(screen)
     blue_warrior_group.update()
 
     red_hit_bullets = pygame.sprite.spritecollide(blue_warrior_group.sprite, red_bullets_group, False)
     blue_hit_bullets = pygame.sprite.spritecollide(red_warrior_group.sprite, blue_bullets_group, False)
 
-    if red_hit_bullets:
-        kill_bullet_and_spawn_explosion()
-        blue_warrior_group.sprite.do_damage()
+    if game_stage == 'battle':
 
-    if blue_hit_bullets:
-        kill_bullet_and_spawn_explosion()
-        red_warrior_group.sprite.do_damage()
+        if red_hit_bullets:
+            kill_bullet_and_spawn_explosion()
+
+        if blue_hit_bullets:
+            kill_bullet_and_spawn_explosion()
+
+        red_warrior_group.draw(screen)
+        blue_warrior_group.draw(screen)
+
+        if red_hit_bullets:
+            blue_warrior_group.sprite.do_damage()
+
+        if blue_hit_bullets:
+            red_warrior_group.sprite.do_damage()
+
+        if blue_warrior_group.sprite.heals == 0:
+            game_stage = 'redWin'
+            blue_warrior_group.sprite.isAlive = False
+            spawn_player_explosion(blue_warrior_group.sprite.rect.centerx,
+                                   blue_warrior_group.sprite.rect.centery)
+
+        if red_warrior_group.sprite.heals == 0:
+            game_stage = 'blueWin'
+            red_warrior_group.sprite.isAlive = False
+            spawn_player_explosion(red_warrior_group.sprite.rect.centerx,
+                                   red_warrior_group.sprite.rect.centery)
+
+    elif game_stage == 'redWin':
+
+        red_warrior_group.draw(screen)
+        if blue_hit_bullets:
+            kill_bullet_and_spawn_explosion()
+
+    elif game_stage == 'blueWin':
+
+        blue_warrior_group.draw(screen)
+        if red_hit_bullets:
+            kill_bullet_and_spawn_explosion()
 
     if explosions:
         update_explosions()
