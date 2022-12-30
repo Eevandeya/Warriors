@@ -213,6 +213,8 @@ pygame.display.set_caption('Game')
 clock = pygame.time.Clock()
 
 battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
+blue_wins_background = pygame.image.load('images/blue_wins_screen.png').convert_alpha()
+red_wins_background = pygame.image.load('images/red_wins_screen.png').convert_alpha()
 
 full_heart = pygame.image.load('images/full_heart.png').convert_alpha()
 empty_heart = pygame.image.load('images/empty_heart.png').convert_alpha()
@@ -256,6 +258,7 @@ HEART_INDENT = 20
 BULLET_INDENT = 270
 TOP_LINE = 43
 BOTTOM_LINE = 585
+ENDSCREEN_DELAY = 60
 
 red_warrior_group = pygame.sprite.GroupSingle()
 red_warrior_group.add(Warrior('bottom'))
@@ -327,11 +330,22 @@ while True:
         if blue_hit_bullets:
             kill_bullet_and_spawn_explosion()
 
+        if not ENDSCREEN_DELAY:
+            screen.blit(red_wins_background, (0,0))
+        else:
+            ENDSCREEN_DELAY -= 1
+
+
     elif game_stage == 'blueWin':
 
         blue_warrior_group.draw(screen)
         if red_hit_bullets:
             kill_bullet_and_spawn_explosion()
+
+        if not ENDSCREEN_DELAY:
+            screen.blit(blue_wins_background, (0,0))
+        else:
+            ENDSCREEN_DELAY -= 1
 
     if explosions:
         update_explosions()
