@@ -42,6 +42,8 @@ explosions = []
 game_stage = 'battle'
 endscreen_delay = Constants.ENDSCREEN_DELAY
 
+play_win_sound = True
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -108,6 +110,11 @@ while True:
             kill_bullet_and_spawn_explosion()
 
         if not endscreen_delay:
+
+            if play_win_sound:
+                Sounds.win_sound.play()
+            play_win_sound = False
+
             screen.blit(red_wins_background, (0,0))
         else:
             endscreen_delay -= 1
