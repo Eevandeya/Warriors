@@ -25,6 +25,23 @@ def spawn_player_explosion(x, y):
     Sounds.explosion_sound.play()
 
 
+def reset_game():
+    global game_stage, end_screen_delay, explosions, winner, play_win_sound
+
+    red_warrior_group.empty()
+    blue_warrior_group.empty()
+    red_bullets_group.empty()
+    blue_bullets_group.empty()
+
+    red_warrior_group.add(Warrior('bottom'))
+    blue_warrior_group.add(Warrior('top'))
+
+    game_stage = 'battle'
+    end_screen_delay = Constants.ENDSCREEN_DELAY
+    explosions = []
+    winner = None
+    play_win_sound = True
+
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -43,7 +60,7 @@ blue_bullets_group = pygame.sprite.Group()
 
 # Вспомогательные изменяемые параметры
 game_stage = 'battle'
-endscreen_delay = Constants.ENDSCREEN_DELAY
+end_screen_delay = Constants.ENDSCREEN_DELAY
 explosions = []
 winner = None
 play_win_sound = True
@@ -54,6 +71,11 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
+
+        if game_stage == 'end':
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    reset_game()
 
     screen.fill('#dcdcdc')
     screen.blit(battlefield, (0, 150))
@@ -141,7 +163,7 @@ while True:
                 blue_bullets_group.add(BlueBullet(blue_shot))
 
         # После победы, нужно выждать задержку, после появляется эндскрин, играется звук
-        if not endscreen_delay:
+        if not end_screen_delay:
 
             if play_win_sound:
                 Sounds.win_sound.play()
@@ -149,7 +171,7 @@ while True:
 
             screen.blit(end_screen, (0, 0))
         else:
-            endscreen_delay -= 1
+            end_screen_delay -= 1
 
     # Обработка всех взрывов
     if explosions:
