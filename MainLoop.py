@@ -41,6 +41,7 @@ explosions = []
 
 game_stage = 'battle'
 endscreen_delay = Constants.ENDSCREEN_DELAY
+winner = None
 
 play_win_sound = True
 
@@ -63,18 +64,18 @@ while True:
     red_warrior_group.update()
     blue_warrior_group.update()
 
-    blue_shot = blue_warrior_group.sprite.warrior_shots()
-    if blue_shot != False:
-        blue_bullets_group.add(BlueBullet(blue_shot))
-
-    red_shot = red_warrior_group.sprite.warrior_shots()
-    if red_shot != False:
-        red_bullets_group.add(RedBullet(red_shot))
-
     red_hit_bullets = pygame.sprite.spritecollide(blue_warrior_group.sprite, red_bullets_group, False)
     blue_hit_bullets = pygame.sprite.spritecollide(red_warrior_group.sprite, blue_bullets_group, False)
 
     if game_stage == 'battle':
+
+        blue_shot = blue_warrior_group.sprite.warrior_shots()
+        if blue_shot != False:
+            blue_bullets_group.add(BlueBullet(blue_shot))
+
+        red_shot = red_warrior_group.sprite.warrior_shots()
+        if red_shot != False:
+            red_bullets_group.add(RedBullet(red_shot))
 
         if red_hit_bullets:
             kill_bullet_and_spawn_explosion()
@@ -92,22 +93,39 @@ while True:
             red_warrior_group.sprite.do_damage(blue_hit_bullets)
 
         if blue_warrior_group.sprite.heals == 0:
-            game_stage = 'redWin'
+            game_stage = 'end'
+            winner = 'red'
             blue_warrior_group.sprite.isAlive = False
             spawn_player_explosion(blue_warrior_group.sprite.rect.centerx,
                                    blue_warrior_group.sprite.rect.centery)
 
         if red_warrior_group.sprite.heals == 0:
-            game_stage = 'blueWin'
+            game_stage = 'end'
+            winner = 'blue'
             red_warrior_group.sprite.isAlive = False
             spawn_player_explosion(red_warrior_group.sprite.rect.centerx,
                                    red_warrior_group.sprite.rect.centery)
 
-    elif game_stage == 'redWin':
+    elif game_stage == 'end':
+        if winner == 'red':
+            red_warrior_group.draw(screen)
+            if blue_hit_bullets:
+                kill_bullet_and_spawn_explosion()
+            end_screen = red_wins_background
 
-        red_warrior_group.draw(screen)
-        if blue_hit_bullets:
-            kill_bullet_and_spawn_explosion()
+            red_shot = red_warrior_group.sprite.warrior_shots()
+            if red_shot != False:
+                red_bullets_group.add(RedBullet(red_shot))
+
+        else:
+            blue_warrior_group.draw(screen)
+            if red_hit_bullets:
+                kill_bullet_and_spawn_explosion()
+            end_screen = blue_wins_background
+
+            blue_shot = blue_warrior_group.sprite.warrior_shots()
+            if blue_shot != False:
+                blue_bullets_group.add(BlueBullet(blue_shot))
 
         if not endscreen_delay:
 
@@ -115,19 +133,7 @@ while True:
                 Sounds.win_sound.play()
             play_win_sound = False
 
-            screen.blit(red_wins_background, (0,0))
-        else:
-            endscreen_delay -= 1
-
-
-    elif game_stage == 'blueWin':
-
-        blue_warrior_group.draw(screen)
-        if red_hit_bullets:
-            kill_bullet_and_spawn_explosion()
-
-        if not endscreen_delay:
-            screen.blit(blue_wins_background, (0,0))
+            screen.blit(end_screen, (0, 0))
         else:
             endscreen_delay -= 1
 
