@@ -12,6 +12,8 @@ def display_character_frames(line, pointer):
         else:
             screen.blit(empty_frame, (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
 
+        screen.blit(family[i], (i * Constants.GAP_BETWEEN_FRAMES + 46, line + 25))
+
 
 def display_heals(hearts, line):
     for i, heart in enumerate(hearts):
@@ -34,6 +36,22 @@ def display_bullet_explosion(lifetime, x, y):
 
 def display_player_explosion(lifetime, x, y):
     screen.blit(player_explosion_images[lifetime // 5], (x - 16, y - 16))
+
+
+def display_picking_character_name(pointer, line, isPicked):
+    if isPicked:
+        screen.blit(chosen_nickname_frame, (Constants.NICKNAME_FRAME_INDENT, line))
+        if pointer == 1:
+            screen.blit(green_family_nicknames[pointer], (Constants.NICKNAME_INDENT + 32, line + 22))
+        else:
+            screen.blit(green_family_nicknames[pointer], (Constants.NICKNAME_INDENT, line + 22))
+
+    else:
+        screen.blit(empty_nickname_frame, (Constants.NICKNAME_FRAME_INDENT, line))
+        if pointer == 1:
+            screen.blit(family_nicknames[pointer], (Constants.NICKNAME_INDENT + 32, line + 22))
+        else:
+            screen.blit(family_nicknames[pointer], (Constants.NICKNAME_INDENT, line + 22))
 
 
 battlefield = pygame.image.load('images/scene/battlefield2.png').convert_alpha()
@@ -77,3 +95,35 @@ player_explosion_images = [pygame.transform.scale2x(im) for im in player_explosi
 
 red_bullet = pygame.image.load('images/scene/red_bullet.png').convert_alpha()
 blue_bullet = pygame.image.load('images/scene/blue_bullet.png').convert_alpha()
+
+dada = pygame.image.load('images/family_warriors/dada.png').convert_alpha()
+kiki = pygame.image.load('images/family_warriors/kiki.png').convert_alpha()
+vava = pygame.image.load('images/family_warriors/dummy.png').convert_alpha()
+papa = pygame.image.load('images/family_warriors/dummy.png').convert_alpha()
+mama = pygame.image.load('images/family_warriors/dummy.png').convert_alpha()
+
+family = [dada, kiki, vava, papa, mama]
+
+pygame.font.init()
+
+pixel_font = pygame.font.Font('font/Pixeltype.ttf',100)
+
+dada_nickname = pixel_font.render('dada', False, (0, 0, 0))
+kiki_nickname = pixel_font.render('kiki', False, (0, 0, 0))
+vava_nickname = pixel_font.render('vava', False, (0, 0, 0))
+papa_nickname = pixel_font.render('papa', False, (0, 0, 0))
+mama_nickname = pixel_font.render('mama', False, (0, 0, 0))
+
+green_dada_nickname = pixel_font.render('dada', False, (10, 100, 10))
+green_kiki_nickname = pixel_font.render('kiki', False, (10, 100, 10))
+green_vava_nickname = pixel_font.render('vava', False, (10, 100, 10))
+green_papa_nickname = pixel_font.render('papa', False, (10, 100, 10))
+green_mama_nickname = pixel_font.render('mama', False, (10, 100, 10))
+
+green_family_nicknames = [green_dada_nickname, green_kiki_nickname, green_vava_nickname,
+                          green_papa_nickname, green_mama_nickname]
+
+family_nicknames = [dada_nickname, kiki_nickname, vava_nickname, papa_nickname, mama_nickname]
+
+empty_nickname_frame = pygame.image.load('images/empty_nickname_frame.png').convert_alpha()
+chosen_nickname_frame = pygame.image.load('images/chosen_nickname_frame.png').convert_alpha()

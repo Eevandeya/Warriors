@@ -11,7 +11,11 @@ dada_death = pygame.mixer.Sound('sounds/даню-убили.wav')
 dada_hit = pygame.mixer.Sound('sounds/в-даню-попали.wav')
 
 win_sound = pygame.mixer.Sound('sounds/win.wav')
+switch_sound = pygame.mixer.Sound('sounds/switch.wav')
+pick_sound = pygame.mixer.Sound('sounds/pick.wav')
 
+pick_sound.set_volume(0.5)
+switch_sound.set_volume(0.5)
 kiki_hit.set_volume(0.5)
 kiki_death.set_volume(0.6)
 kiki_shot.set_volume(0.1)

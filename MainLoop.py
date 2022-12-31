@@ -1,6 +1,6 @@
 import pygame
 from Screen import screen, battlefield, red_wins_background, blue_wins_background, \
-    choosing_field, display_character_frames
+    choosing_field
 from Warrior import Warrior
 import Constants
 from Bullet import RedBullet, BlueBullet
@@ -74,7 +74,7 @@ red_bullets_group = pygame.sprite.Group()
 blue_bullets_group = pygame.sprite.Group()
 
 # Вспомогательные изменяемые параметры
-game_stage = 'choosing'
+game_stage = 'pick'
 end_screen_delay = Constants.ENDSCREEN_DELAY
 explosions = []
 winner = None
@@ -95,7 +95,7 @@ while True:
                 if event.key == pygame.K_SPACE:
                     reset_game()
 
-    if game_stage == 'choosing':
+    if game_stage == 'pick':
         screen.blit(choosing_field, (0, 0))
         top_pick_panel.update()
         bottom_pick_panel.update()
