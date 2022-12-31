@@ -21,22 +21,22 @@ def display_ammo(ammo, line):
 
 
 def display_bullet_explosion(lifetime, x, y):
-    screen.blit(bullet_explosion_images[lifetime // 3], (x, y))
+    screen.blit(bullet_explosion_images[lifetime // 3], (x - 5, y - 5))
 
 
 def display_player_explosion(lifetime, x, y):
-    screen.blit(player_explosion_images[lifetime // 5], (x, y))
+    screen.blit(player_explosion_images[lifetime // 5], (x - 16, y - 16))
 
 
-battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
-blue_wins_background = pygame.image.load('images/blue_wins_screen.png').convert_alpha()
-red_wins_background = pygame.image.load('images/red_wins_screen.png').convert_alpha()
+battlefield = pygame.image.load('images/scene/battlefield2.png').convert_alpha()
+blue_wins_background = pygame.image.load('images/scene/blue_wins_screen.png').convert_alpha()
+red_wins_background = pygame.image.load('images/scene/red_wins_screen.png').convert_alpha()
 
-full_heart = pygame.image.load('images/full_heart.png').convert_alpha()
-empty_heart = pygame.image.load('images/empty_heart.png').convert_alpha()
+full_heart = pygame.image.load('images/scene/full_heart.png').convert_alpha()
+empty_heart = pygame.image.load('images/scene/empty_heart.png').convert_alpha()
 
-full_bullet = pygame.image.load('images/full_bullet_2.png')
-empty_bullet = pygame.image.load('images/empty_bullet_2.png').convert_alpha()
+full_bullet = pygame.image.load('images/scene/full_bullet_2.png')
+empty_bullet = pygame.image.load('images/scene/empty_bullet_2.png').convert_alpha()
 
 bullet_explosion_frame1 = pygame.image.load('images/bullet_explosion_animation/frame1.png').convert_alpha()
 bullet_explosion_frame2 = pygame.image.load('images/bullet_explosion_animation/frame2.png').convert_alpha()
@@ -59,5 +59,8 @@ player_explosion_images = [player_explosion_frame1,
                            player_explosion_frame5,
                            player_explosion_frame6]
 
-red_bullet = pygame.image.load('images/red_bullet.png').convert_alpha()
-blue_bullet = pygame.image.load('images/blue_bullet.png').convert_alpha()
+bullet_explosion_images = [pygame.transform.scale2x(im) for im in bullet_explosion_images]
+player_explosion_images = [pygame.transform.scale2x(im) for im in player_explosion_images]
+
+red_bullet = pygame.image.load('images/scene/red_bullet.png').convert_alpha()
+blue_bullet = pygame.image.load('images/scene/blue_bullet.png').convert_alpha()

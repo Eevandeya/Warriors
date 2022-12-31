@@ -16,8 +16,9 @@ class Warrior(pygame.sprite.Sprite):
             self.stats_line_level = Constants.TOP_LINE
             self.is_top_side = True
 
-            self.image = pygame.image.load('images/blue_warrior.png').convert_alpha()
+            self.image = pygame.image.load('images/family_warriors/dada.png').convert_alpha()
             self.rect = self.image.get_rect(topleft=(100, 250))
+
         elif game_side == 'bottom':
             self.borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
             self.control_buttons = {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT,
@@ -25,7 +26,7 @@ class Warrior(pygame.sprite.Sprite):
             self.stats_line_level = Constants.BOTTOM_LINE
             self.is_top_side = False
 
-            self.image = pygame.image.load('images/red_warrior.png').convert_alpha()
+            self.image = pygame.image.load('images/family_warriors/kiki.png').convert_alpha()
             self.rect = self.image.get_rect(topleft=(Constants.WIDTH - 100, 542 - 100))
         else:
             print('Ошибка: неверно указан параметр game_side, при создании объекта класса Warrior. (top/bottom)')
@@ -78,7 +79,8 @@ class Warrior(pygame.sprite.Sprite):
                 self.fire_delay_level = self.fire_delay
                 self.reload_delay_level = self.reload_delay
 
-                return self.rect.x, self.rect.y
+                # (+ 6) чтобы пуля выходила из середины игрока, иначе смещена влево
+                return self.rect.x + 6, self.rect.y
         return False
 
     def do_damage(self, bullets):

@@ -3,12 +3,11 @@ import pygame
 pygame.mixer.init()
 
 kiki_shot = pygame.mixer.Sound('sounds/кирилл-стреляет.wav')
-dada_shot = pygame.mixer.Sound('sounds/даня-стреляет.wav')
-
 kiki_death = pygame.mixer.Sound('sounds/кирилла-убили.wav')
-dada_death = pygame.mixer.Sound('sounds/даню-убили.wav')
-
 kiki_hit = pygame.mixer.Sound('sounds/в-кирилла-попали.wav')
+
+dada_shot = pygame.mixer.Sound('sounds/даня-стреляет.wav')
+dada_death = pygame.mixer.Sound('sounds/даню-убили.wav')
 dada_hit = pygame.mixer.Sound('sounds/в-даню-попали.wav')
 
 win_sound = pygame.mixer.Sound('sounds/win.wav')
