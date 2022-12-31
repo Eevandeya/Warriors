@@ -5,6 +5,14 @@ screen = pygame.display.set_mode((Constants.WIDTH, Constants.HEIGHT))
 pygame.display.set_caption('Warriors')
 
 
+def display_character_frames(line, pointer):
+    for i in range(5):
+        if i == pointer:
+            screen.blit(chosen_frame, (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
+        else:
+            screen.blit(empty_frame, (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
+
+
 def display_heals(hearts, line):
     for i, heart in enumerate(hearts):
         screen.blit(heart, (i * Constants.GAP_BETWEEN_HEARTS + Constants.HEART_INDENT, line))
@@ -29,6 +37,8 @@ def display_player_explosion(lifetime, x, y):
 
 
 battlefield = pygame.image.load('images/scene/battlefield2.png').convert_alpha()
+choosing_field = pygame.image.load('images/choosing_field.png').convert_alpha()
+
 blue_wins_background = pygame.image.load('images/scene/blue_wins_screen.png').convert_alpha()
 red_wins_background = pygame.image.load('images/scene/red_wins_screen.png').convert_alpha()
 
@@ -37,6 +47,9 @@ empty_heart = pygame.image.load('images/scene/empty_heart.png').convert_alpha()
 
 full_bullet = pygame.image.load('images/scene/full_bullet_2.png')
 empty_bullet = pygame.image.load('images/scene/empty_bullet_2.png').convert_alpha()
+
+chosen_frame = pygame.image.load('images/chosen_frame.png').convert_alpha()
+empty_frame = pygame.image.load('images/empty_frame.png').convert_alpha()
 
 bullet_explosion_frame1 = pygame.image.load('images/bullet_explosion_animation/frame1.png').convert_alpha()
 bullet_explosion_frame2 = pygame.image.load('images/bullet_explosion_animation/frame2.png').convert_alpha()

@@ -13,7 +13,7 @@ class Warrior(pygame.sprite.Sprite):
             self.borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
             self.control_buttons = {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a,
                                     'right': pygame.K_d, 'fire': pygame.K_g}
-            self.stats_line_level = Constants.TOP_LINE
+            self.stats_line_level = Constants.TOP_STAT_LINE
             self.is_top_side = True
 
             self.image = pygame.image.load('images/family_warriors/dada.png').convert_alpha()
@@ -23,7 +23,7 @@ class Warrior(pygame.sprite.Sprite):
             self.borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
             self.control_buttons = {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT,
                                     'right': pygame.K_RIGHT, 'fire': pygame.K_RCTRL}
-            self.stats_line_level = Constants.BOTTOM_LINE
+            self.stats_line_level = Constants.BOTTOM_STAT_LINE
             self.is_top_side = False
 
             self.image = pygame.image.load('images/family_warriors/kiki.png').convert_alpha()
