@@ -24,6 +24,10 @@ def display_bullet_explosion(lifetime, x, y):
     screen.blit(bullet_explosion_images[lifetime // 3], (x, y))
 
 
+def display_player_explosion(lifetime, x, y):
+    screen.blit(player_explosion_images[lifetime // 5], (x, y))
+
+
 battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
 blue_wins_background = pygame.image.load('images/blue_wins_screen.png').convert_alpha()
 red_wins_background = pygame.image.load('images/red_wins_screen.png').convert_alpha()

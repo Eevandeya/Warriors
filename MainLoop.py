@@ -39,10 +39,6 @@ red_bullets_group = pygame.sprite.Group()
 blue_bullets_group = pygame.sprite.Group()
 explosions = []
 
-red_hit_bullets = None
-blue_hit_bullets = None
-
-
 game_stage = 'battle'
 endscreen_delay = Constants.ENDSCREEN_DELAY
 
@@ -63,6 +59,7 @@ while True:
     blue_bullets_group.update()
 
     red_warrior_group.update()
+    blue_warrior_group.update()
 
     blue_shot = blue_warrior_group.sprite.warrior_shots()
     if blue_shot != False:
@@ -71,8 +68,6 @@ while True:
     red_shot = red_warrior_group.sprite.warrior_shots()
     if red_shot != False:
         red_bullets_group.add(RedBullet(red_shot))
-
-    blue_warrior_group.update()
 
     red_hit_bullets = pygame.sprite.spritecollide(blue_warrior_group.sprite, red_bullets_group, False)
     blue_hit_bullets = pygame.sprite.spritecollide(red_warrior_group.sprite, blue_bullets_group, False)
@@ -133,4 +128,4 @@ while True:
         update_explosions()
 
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(Constants.FPS)
