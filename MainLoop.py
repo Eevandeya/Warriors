@@ -7,9 +7,14 @@ import Sounds
 import Explosions
 
 def kill_bullet_and_spawn_explosion():
-    for bullet in red_hit_bullets + blue_hit_bullets:
+    for bullet in red_hit_bullets:
         explosions.append(Explosions.BulletExplosion(bullet.rect.x, bullet.rect.y))
-        Sounds.hit_sound.play()
+        Sounds.dada_hit.play()
+        bullet.kill()
+
+    for bullet in blue_hit_bullets:
+        explosions.append(Explosions.BulletExplosion(bullet.rect.x, bullet.rect.y))
+        Sounds.kiki_hit.play()
         bullet.kill()
 
 
@@ -22,8 +27,10 @@ def update_explosions():
 
 def spawn_player_explosion(x, y):
     explosions.append(Explosions.PlayerExplosion(x, y))
-    Sounds.explosion_sound.play()
-
+    if not blue_warrior_group.sprite.isAlive:
+        Sounds.dada_death.play()
+    else:
+        Sounds.kiki_death.play()
 
 def reset_game():
     global game_stage, end_screen_delay, explosions, winner, play_win_sound

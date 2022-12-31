@@ -71,7 +71,10 @@ class Warrior(pygame.sprite.Sprite):
             if keys[self.control_buttons['fire']]:
 
                 self.ammo -= 1
-                Sounds.shoot_sound.play()
+                if self.is_top_side:
+                    Sounds.dada_shot.play()
+                else:
+                    Sounds.kiki_shot.play()
                 self.fire_delay_level = self.fire_delay
                 self.reload_delay_level = self.reload_delay
 

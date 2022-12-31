@@ -2,12 +2,23 @@ import pygame
 
 pygame.mixer.init()
 
-hit_sound = pygame.mixer.Sound('sounds/hit.wav')
-shoot_sound = pygame.mixer.Sound('sounds/shoot.wav')
-explosion_sound = pygame.mixer.Sound('sounds/explosion.wav')
+kiki_shot = pygame.mixer.Sound('sounds/кирилл-стреляет.wav')
+dada_shot = pygame.mixer.Sound('sounds/даня-стреляет.wav')
+
+kiki_death = pygame.mixer.Sound('sounds/кирилла-убили.wav')
+dada_death = pygame.mixer.Sound('sounds/даню-убили.wav')
+
+kiki_hit = pygame.mixer.Sound('sounds/в-кирилла-попали.wav')
+dada_hit = pygame.mixer.Sound('sounds/в-даню-попали.wav')
+
 win_sound = pygame.mixer.Sound('sounds/win.wav')
 
-hit_sound.set_volume(0.1)
-shoot_sound.set_volume(0.1)
-explosion_sound.set_volume(0.3)
-win_sound.set_volume(0.3)
+kiki_hit.set_volume(0.5)
+kiki_death.set_volume(0.6)
+kiki_shot.set_volume(0.1)
+
+win_sound.set_volume(0.5)
+
+dada_hit.set_volume(0.5)
+dada_death.set_volume(0.6)
+dada_shot.set_volume(0.15)
