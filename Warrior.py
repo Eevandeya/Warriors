@@ -1,14 +1,13 @@
 import pygame
-import Images
 import Constants
 import Sounds
-from Screen import display_heals, display_ammo
+from Screen import display_heals, display_ammo, full_heart, empty_heart
 
 class Warrior(pygame.sprite.Sprite):
     def __init__(self, game_side: str):
         super().__init__()
 
-        self.hearts = [Images.full_heart, Images.full_heart, Images.full_heart]
+        self.hearts = [full_heart, full_heart, full_heart]
 
         if game_side == 'top':
             self.borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
@@ -77,7 +76,7 @@ class Warrior(pygame.sprite.Sprite):
     def do_damage(self, bullets):
         for _ in bullets:
             self.heals -= 1
-            self.hearts.append(Images.empty_heart)
+            self.hearts.append(empty_heart)
             self.hearts.pop(0)
 
     def reload(self):

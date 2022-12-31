@@ -1,8 +1,7 @@
 import pygame
-from Screen import screen
+from Screen import screen, battlefield, red_wins_background, blue_wins_background
 from Warrior import Warrior
 import Constants
-from Images import battlefield, red_wins_background, blue_wins_background
 from Bullet import RedBullet, BlueBullet
 import Sounds
 import Explosions

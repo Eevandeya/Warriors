@@ -1,4 +1,3 @@
-import pygame
 from Screen import display_bullet_explosion
 
 class BulletExplosion:
