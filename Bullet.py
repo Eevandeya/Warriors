@@ -7,9 +7,10 @@ class RedBullet(pygame.sprite.Sprite):
         super().__init__()
         self.image = Screen.red_bullet
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
+        self.speed = 8
 
     def update(self):
-        self.rect.y -= 6
+        self.rect.y -= self.speed
         self.destroy()
 
     def destroy(self):
@@ -23,9 +24,10 @@ class BlueBullet(pygame.sprite.Sprite):
         super().__init__()
         self.image = Screen.blue_bullet
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
+        self.speed = 8
 
     def update(self):
-        self.rect.y += 6
+        self.rect.y += self.speed
 
     def destroy(self):
         if self.rect.y > 512 + 30:

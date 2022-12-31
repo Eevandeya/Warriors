@@ -17,7 +17,7 @@ class Warrior(pygame.sprite.Sprite):
             self.is_top_side = True
 
             self.image = pygame.image.load('images/blue_warrior.png').convert_alpha()
-            self.rect = self.image.get_rect(topleft=(100, 200))
+            self.rect = self.image.get_rect(topleft=(100, 250))
         elif game_side == 'bottom':
             self.borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
             self.control_buttons = {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT,
@@ -26,26 +26,31 @@ class Warrior(pygame.sprite.Sprite):
             self.is_top_side = False
 
             self.image = pygame.image.load('images/red_warrior.png').convert_alpha()
-            self.rect = self.image.get_rect(topleft=(100, 400))
+            self.rect = self.image.get_rect(topleft=(Constants.WIDTH - 100, 542 - 100))
         else:
             print('Ошибка: неверно указан параметр game_side, при создании объекта класса Warrior. (top/bottom)')
             exit()
 
+        """Настраиваемые параметры"""
         # Задержка между выстрелами
-        self.fire_delay = 0
+        self.fire_delay = 10
 
         # Задержка между выстрелами и перезарядкой
         # (Чтобы началась перезарядка, нужно подождать, не стреляя)
-        self.reload_delay = 0
+        self.reload_delay = 10
 
-        # Перезарядка патрон
-        self.ammo_reload = 0
+        # Скорость перезарядки (больше - медленнее перезарядка)
+        self.ammo_reload = 30
 
-        self.speed = 2
+        self.speed = 3
         self.heals = 3
         self.ammo = 5
+        """==========================="""
 
         self.isAlive = True
+        self.fire_delay_level = 0
+        self.reload_delay_level = 0
+        self.ammo_reload_level = 0
 
     def warrior_control(self):
         keys = pygame.key.get_pressed()
@@ -62,13 +67,13 @@ class Warrior(pygame.sprite.Sprite):
     def warrior_shots(self):
         keys = pygame.key.get_pressed()
 
-        if not self.fire_delay and self.ammo:
+        if not self.fire_delay_level and self.ammo:
             if keys[self.control_buttons['fire']]:
 
                 self.ammo -= 1
                 Sounds.shoot_sound.play()
-                self.fire_delay = 10
-                self.reload_delay = 10
+                self.fire_delay_level = self.fire_delay
+                self.reload_delay_level = self.reload_delay
 
                 return self.rect.x, self.rect.y
         return False
@@ -82,20 +87,20 @@ class Warrior(pygame.sprite.Sprite):
     def reload(self):
 
         # Проверка на то, что выдержана задержка между выстрелом и перезарядкой
-        if self.reload_delay:
-            self.reload_delay -= 1
+        if self.reload_delay_level:
+            self.reload_delay_level -= 1
         else:
 
             # Проверка на то, что патрон меньше 5
             if self.ammo < 5:
 
                 # Перезарядка
-                self.ammo_reload += 1
+                self.ammo_reload_level += 1
 
                 # Увеличение патрон, если перезарядка на нужном уровне
-                if self.ammo_reload >= 30:
+                if self.ammo_reload_level >= self.ammo_reload:
                     self.ammo += 1
-                    self.ammo_reload = 0
+                    self.ammo_reload_level = 0
 
     def update(self):
         if self.isAlive:
@@ -105,5 +110,5 @@ class Warrior(pygame.sprite.Sprite):
         display_ammo(self.ammo, self.stats_line_level)
         display_heals(self.hearts, self.stats_line_level)
 
-        if self.fire_delay:
-            self.fire_delay -= 1
+        if self.fire_delay_level:
+            self.fire_delay_level -= 1
