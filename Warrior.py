@@ -1,7 +1,8 @@
-import Sounds
-from Inner import *
-from Bullet import *
+import pygame
+import Images
 import Constants
+import Sounds
+from Screen import display_heals, display_ammo
 
 class Warrior(pygame.sprite.Sprite):
     def __init__(self, game_side: str):
@@ -59,6 +60,9 @@ class Warrior(pygame.sprite.Sprite):
         if keys[self.control_buttons['right']] and self.rect.right < self.borders['right']:
             self.rect.x += self.speed
 
+    def warrior_shots(self):
+        keys = pygame.key.get_pressed()
+
         if not self.fire_delay and self.ammo:
             if keys[self.control_buttons['fire']]:
 
@@ -67,35 +71,14 @@ class Warrior(pygame.sprite.Sprite):
                 self.fire_delay = 10
                 self.reload_delay = 10
 
-                if self.is_top_side:
-                    blue_bullets_group.add(BlueBullet(self.rect.x, self.rect.y))
-                else:
-                    red_bullets_group.add(RedBullet(self.rect.x, self.rect.y))
+                return self.rect.x, self.rect.y
+        return False
 
-    def do_damage(self):
-        if self.is_top_side:
-            for _ in red_hit_bullets:
-                self.heals -= 1
-                self.hearts.append(Images.empty_heart)
-                self.hearts.pop(0)
-        else:
-            for _ in blue_hit_bullets:
-                self.heals -= 1
-                self.hearts.append(Images.empty_heart)
-                self.hearts.pop(0)
-
-    def display_heals(self):
-        for i, heart in enumerate(self.hearts):
-            Images.screen.blit(heart, (i * Constants.GAP_BETWEEN_HEARTS + Constants.HEART_INDENT, self.stats_line_level))
-
-    def display_bullets(self):
-        number = 0
-        for i in range(self.ammo):
-            Images.screen.blit(Images.full_bullet, (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, self.stats_line_level))
-            number += 1
-        for i in range(5 - number):
-            Images.screen.blit(Images.empty_bullet, (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, self.stats_line_level))
-            number += 1
+    def do_damage(self, bullets):
+        for _ in bullets:
+            self.heals -= 1
+            self.hearts.append(Images.empty_heart)
+            self.hearts.pop(0)
 
     def reload(self):
 
@@ -120,8 +103,8 @@ class Warrior(pygame.sprite.Sprite):
             self.warrior_control()
             self.reload()
 
-        self.display_bullets()
-        self.display_heals()
+        display_ammo(self.ammo, self.stats_line_level)
+        display_heals(self.hearts, self.stats_line_level)
 
         if self.fire_delay:
             self.fire_delay -= 1

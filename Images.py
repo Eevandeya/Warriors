@@ -1,8 +1,4 @@
 import pygame
-import Constants
-
-screen = pygame.display.set_mode((Constants.WIDTH, Constants.HEIGHT))
-pygame.display.set_caption('Game')
 
 battlefield = pygame.image.load('images/battlefield2.png').convert_alpha()
 blue_wins_background = pygame.image.load('images/blue_wins_screen.png').convert_alpha()

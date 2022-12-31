@@ -1,4 +1,4 @@
-from Inner import *
+import pygame
 
 pygame.mixer.init()
 

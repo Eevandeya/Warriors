@@ -2,7 +2,8 @@ import pygame
 import Images
 
 class RedBullet(pygame.sprite.Sprite):
-    def __init__(self, warrior_x, warrior_y):
+    def __init__(self, warrior_pos):
+        warrior_x, warrior_y = warrior_pos
         super().__init__()
         self.image = Images.red_bullet
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
@@ -17,7 +18,8 @@ class RedBullet(pygame.sprite.Sprite):
 
 
 class BlueBullet(pygame.sprite.Sprite):
-    def __init__(self, warrior_x, warrior_y):
+    def __init__(self, warrior_pos):
+        warrior_x, warrior_y = warrior_pos
         super().__init__()
         self.image = Images.blue_bullet
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
