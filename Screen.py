@@ -97,9 +97,9 @@ blue_bullet = pygame.image.load('images/scene/blue_bullet.png').convert_alpha()
 
 dada = pygame.image.load('images/family_warriors/dada.png').convert_alpha()
 kiki = pygame.image.load('images/family_warriors/kiki.png').convert_alpha()
-vava = pygame.image.load('images/family_warriors/dummy.png').convert_alpha()
-papa = pygame.image.load('images/family_warriors/dummy.png').convert_alpha()
-mama = pygame.image.load('images/family_warriors/dummy.png').convert_alpha()
+vava = pygame.image.load('images/family_warriors/vava.png').convert_alpha()
+papa = pygame.image.load('images/family_warriors/papa.png').convert_alpha()
+mama = pygame.image.load('images/family_warriors/mama.png').convert_alpha()
 
 family = [dada, kiki, vava, papa, mama]
 

@@ -51,4 +51,3 @@ pick_sound = pygame.mixer.Sound('sounds/pick.wav')
 kiki_sounds['shot'].set_volume(0.5)
 kiki_sounds['phrases'][0].set_volume(1.5)
 kiki_sounds['phrases'][1].set_volume(1.5)
-

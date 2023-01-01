@@ -171,7 +171,6 @@ while True:
                     red_warrior_group.sprite.do_damage(len(blue_hit_bullets))
 
                 isRedDead, isBlueDead = kill_bullet_and_spawn_explosions()
-                print(isRedDead, isBlueDead)
 
             # Отрисовка игроков
             red_warrior_group.draw(screen)
