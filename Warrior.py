@@ -101,8 +101,8 @@ class Warrior(pygame.sprite.Sprite):
                 return self.rect.x + 6, self.rect.y
         return False
 
-    def do_damage(self, bullets):
-        for _ in bullets:
+    def do_damage(self, bullets_num):
+        for _ in range(bullets_num):
             self.heals -= 1
             self.hearts.append(empty_heart)
             self.hearts.pop(0)

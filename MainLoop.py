@@ -9,17 +9,37 @@ import Explosions
 from PickingPanel import PickingPanel
 
 
-def kill_bullet_and_spawn_explosion():
-    for bullet in red_hit_bullets:
-        explosions.append(Explosions.BulletExplosion(bullet.rect.x, bullet.rect.y))
-        blue_warrior_group.sprite.hit_sound.play()
-        bullet.kill()
+def kill_bullet_and_spawn_explosions():
+    red_dead = False
+    blue_dead = False
 
     for bullet in blue_hit_bullets:
-        explosions.append(Explosions.BulletExplosion(bullet.rect.x, bullet.rect.y))
-        red_warrior_group.sprite.hit_sound.play()
+        if red_warrior_group.sprite.heals == 0:
+            explosions.append(Explosions.PlayerExplosion(red_warrior_group.sprite.rect.centerx,
+                                                         red_warrior_group.sprite.rect.centery))
+            red_warrior_group.sprite.death_sound.play()
+            red_dead = True
+
+        else:
+            explosions.append(Explosions.BulletExplosion(bullet.rect.x, bullet.rect.y))
+            red_warrior_group.sprite.hit_sound.play()
+
         bullet.kill()
 
+    for bullet in red_hit_bullets:
+        if blue_warrior_group.sprite.heals == 0:
+            explosions.append(Explosions.PlayerExplosion(blue_warrior_group.sprite.rect.centerx,
+                                                         blue_warrior_group.sprite.rect.centery))
+            blue_warrior_group.sprite.death_sound.play()
+            blue_dead = True
+
+        else:
+            explosions.append(Explosions.BulletExplosion(bullet.rect.x, bullet.rect.y))
+            blue_warrior_group.sprite.hit_sound.play()
+
+        bullet.kill()
+
+    return red_dead, blue_dead
 
 def update_explosions():
     for explosion in explosions:
@@ -53,6 +73,7 @@ def reset_game():
     bottom_pick_panel = PickingPanel('bottom')
     start_timer = 100
     countdown = False
+    isRedDead, isBlueDead = False, False
 
     globals().update(locals())
 
@@ -79,6 +100,7 @@ top_pick_panel = PickingPanel('top')
 bottom_pick_panel = PickingPanel('bottom')
 start_timer = 100
 countdown = False
+isRedDead, isBlueDead = False, False
 
 while True:
     # Закрытие игры при нажатии крестика
@@ -138,38 +160,33 @@ while True:
             if red_shot != False:
                 red_bullets_group.add(RedBullet(red_shot))
 
-            # Если какие-то пули попали, уничтожение их и спавн взрывов
-            if red_hit_bullets:
-                kill_bullet_and_spawn_explosion()
+            # Если какие-то пули попали, уничтожение их, спавн взрывов
+            # и начисление повреждений игрокам
+            if red_hit_bullets or blue_hit_bullets:
 
-            if blue_hit_bullets:
-                kill_bullet_and_spawn_explosion()
+                if red_hit_bullets:
+                    blue_warrior_group.sprite.do_damage(len(red_hit_bullets))
+
+                if blue_hit_bullets:
+                    red_warrior_group.sprite.do_damage(len(blue_hit_bullets))
+
+                isRedDead, isBlueDead = kill_bullet_and_spawn_explosions()
+                print(isRedDead, isBlueDead)
 
             # Отрисовка игроков
             red_warrior_group.draw(screen)
             blue_warrior_group.draw(screen)
 
-            # Начисление повреждений, если пули попали
-            if red_hit_bullets:
-                blue_warrior_group.sprite.do_damage(red_hit_bullets)
-
-            if blue_hit_bullets:
-                red_warrior_group.sprite.do_damage(blue_hit_bullets)
-
             # Обработка смертей игроков
-            if blue_warrior_group.sprite.heals == 0:
+            if isBlueDead:
                 game_stage = 'end'
                 winner = 'red'
                 blue_warrior_group.sprite.isAlive = False
-                spawn_player_explosion(blue_warrior_group.sprite.rect.centerx,
-                                       blue_warrior_group.sprite.rect.centery)
 
-            if red_warrior_group.sprite.heals == 0:
+            if isRedDead:
                 game_stage = 'end'
                 winner = 'blue'
                 red_warrior_group.sprite.isAlive = False
-                spawn_player_explosion(red_warrior_group.sprite.rect.centerx,
-                                       red_warrior_group.sprite.rect.centery)
 
         elif game_stage == 'end':
 
@@ -178,12 +195,12 @@ while True:
             if winner == 'red':
                 red_warrior_group.draw(screen)
                 if blue_hit_bullets:
-                    kill_bullet_and_spawn_explosion()
+                    kill_bullet_and_spawn_explosions()
 
                 winner_num = red_warrior_group.sprite.character
                 end_screen = end_screen_backround
-                a = win_fount.render(names[winner_num], False, Constants.RED)
-                b = win_fount.render('wins', False, Constants.BLACK)
+                winner_name = win_fount.render(names[winner_num], False, Constants.RED)
+                wins_word = win_fount.render('wins', False, Constants.BLACK)
 
                 red_shot = red_warrior_group.sprite.warrior_shots()
                 if red_shot != False:
@@ -192,12 +209,12 @@ while True:
             else:
                 blue_warrior_group.draw(screen)
                 if red_hit_bullets:
-                    kill_bullet_and_spawn_explosion()
+                    kill_bullet_and_spawn_explosions()
 
                 winner_num = blue_warrior_group.sprite.character
                 end_screen = end_screen_backround
-                a = win_fount.render(names[winner_num], False, Constants.BLUE)
-                b = win_fount.render('wins', False, Constants.BLACK)
+                winner_name = win_fount.render(names[winner_num], False, Constants.BLUE)
+                wins_word = win_fount.render('wins', False, Constants.BLACK)
 
                 blue_shot = blue_warrior_group.sprite.warrior_shots()
                 if blue_shot != False:
@@ -211,8 +228,8 @@ while True:
                 play_win_sound = False
 
                 screen.blit(end_screen, (0, 0))
-                screen.blit(a, (Constants.WINNER_XS[winner_num], Constants.WINNER_NAME_Y))
-                screen.blit(b, (Constants.WINS_WORD_X, Constants.WINS_WORD_Y))
+                screen.blit(winner_name, (Constants.WINNER_XS[winner_num], Constants.WINNER_NAME_Y))
+                screen.blit(wins_word, (Constants.WINS_WORD_X, Constants.WINS_WORD_Y))
             else:
                 end_screen_delay -= 1
 
