@@ -57,8 +57,7 @@ def display_picking_character_name(pointer, line, isPicked):
 battlefield = pygame.image.load('images/scene/battlefield2.png').convert_alpha()
 choosing_field = pygame.image.load('images/choosing_field.png').convert_alpha()
 
-blue_wins_background = pygame.image.load('images/scene/blue_wins_screen.png').convert_alpha()
-red_wins_background = pygame.image.load('images/scene/red_wins_screen.png').convert_alpha()
+end_screen_backround = pygame.image.load('images/empty_end_screen.png').convert_alpha()
 
 full_heart = pygame.image.load('images/scene/full_heart.png').convert_alpha()
 empty_heart = pygame.image.load('images/scene/empty_heart.png').convert_alpha()
@@ -106,24 +105,27 @@ family = [dada, kiki, vava, papa, mama]
 
 pygame.font.init()
 
-pixel_font = pygame.font.Font('font/Pixeltype.ttf',100)
+pixel_font = pygame.font.Font('font/Pixeltype.ttf', 100)
 
-dada_nickname = pixel_font.render('dada', False, (0, 0, 0))
-kiki_nickname = pixel_font.render('kiki', False, (0, 0, 0))
-vava_nickname = pixel_font.render('vava', False, (0, 0, 0))
-papa_nickname = pixel_font.render('papa', False, (0, 0, 0))
-mama_nickname = pixel_font.render('mama', False, (0, 0, 0))
+dada_nickname = pixel_font.render('dada', False, Constants.BLACK)
+kiki_nickname = pixel_font.render('kiki', False, Constants.BLACK)
+vava_nickname = pixel_font.render('vava', False, Constants.BLACK)
+papa_nickname = pixel_font.render('papa', False, Constants.BLACK)
+mama_nickname = pixel_font.render('mama', False, Constants.BLACK)
 
-green_dada_nickname = pixel_font.render('dada', False, (10, 100, 10))
-green_kiki_nickname = pixel_font.render('kiki', False, (10, 100, 10))
-green_vava_nickname = pixel_font.render('vava', False, (10, 100, 10))
-green_papa_nickname = pixel_font.render('papa', False, (10, 100, 10))
-green_mama_nickname = pixel_font.render('mama', False, (10, 100, 10))
+green_dada_nickname = pixel_font.render('dada', False, Constants.DARK_GREEN)
+green_kiki_nickname = pixel_font.render('kiki', False, Constants.DARK_GREEN)
+green_vava_nickname = pixel_font.render('vava', False, Constants.DARK_GREEN)
+green_papa_nickname = pixel_font.render('papa', False, Constants.DARK_GREEN)
+green_mama_nickname = pixel_font.render('mama', False, Constants.DARK_GREEN)
 
 green_family_nicknames = [green_dada_nickname, green_kiki_nickname, green_vava_nickname,
                           green_papa_nickname, green_mama_nickname]
 
 family_nicknames = [dada_nickname, kiki_nickname, vava_nickname, papa_nickname, mama_nickname]
+
+win_fount = pygame.font.Font('font/SFPixelate-Bold.ttf', 150)
+names = ['dada', 'kiki', 'vava', 'papa', 'mama']
 
 empty_nickname_frame = pygame.image.load('images/empty_nickname_frame.png').convert_alpha()
 chosen_nickname_frame = pygame.image.load('images/chosen_nickname_frame.png').convert_alpha()

@@ -24,7 +24,7 @@ class BlueBullet(pygame.sprite.Sprite):
         super().__init__()
         self.image = Screen.blue_bullet
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
-        self.speed = 8
+        self.speed = 9
 
     def update(self):
         self.rect.y += self.speed

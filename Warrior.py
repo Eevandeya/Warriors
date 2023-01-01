@@ -1,33 +1,54 @@
 import pygame
 import Constants
 import Sounds
-from Screen import display_heals, display_ammo, full_heart, empty_heart
+from Screen import display_heals, display_ammo, full_heart, empty_heart, family
 
 class Warrior(pygame.sprite.Sprite):
-    def __init__(self, game_side: str):
+    def __init__(self, game_side, character):
         super().__init__()
 
         self.hearts = [full_heart, full_heart, full_heart]
+
+        self.character = character
+        self.image = family[character]
+
+        sound_dict = {}
+        if character == 0:
+            sound_dict = Sounds.dada_sounds
+        elif character == 1:
+            sound_dict = Sounds.kiki_sounds
+        elif character == 2:
+            sound_dict = Sounds.vava_sounds
+        elif character == 3:
+            sound_dict = Sounds.papa_sounds
+        elif character == 4:
+            sound_dict = Sounds.mama_sounds
+
+        self.hit_sound = sound_dict['hit']
+        self.shot_sound = sound_dict['shot']
+        self.death_sound = sound_dict['death']
+        self.phrases = sound_dict['phrases']
 
         if game_side == 'top':
             self.borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
             self.control_buttons = {'up': pygame.K_w, 'down': pygame.K_s, 'left': pygame.K_a,
                                     'right': pygame.K_d, 'fire': pygame.K_g}
+
             self.stats_line_level = Constants.TOP_STAT_LINE
             self.is_top_side = True
 
-            self.image = pygame.image.load('images/family_warriors/dada.png').convert_alpha()
             self.rect = self.image.get_rect(topleft=(100, 250))
 
         elif game_side == 'bottom':
             self.borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
             self.control_buttons = {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT,
                                     'right': pygame.K_RIGHT, 'fire': pygame.K_RCTRL}
+
             self.stats_line_level = Constants.BOTTOM_STAT_LINE
             self.is_top_side = False
 
-            self.image = pygame.image.load('images/family_warriors/kiki.png').convert_alpha()
             self.rect = self.image.get_rect(topleft=(Constants.WIDTH - 100, 542 - 100))
+
         else:
             print('Ошибка: неверно указан параметр game_side, при создании объекта класса Warrior. (top/bottom)')
             exit()
@@ -72,10 +93,7 @@ class Warrior(pygame.sprite.Sprite):
             if keys[self.control_buttons['fire']]:
 
                 self.ammo -= 1
-                if self.is_top_side:
-                    Sounds.dada_shot.play()
-                else:
-                    Sounds.kiki_shot.play()
+                self.shot_sound.play()
                 self.fire_delay_level = self.fire_delay
                 self.reload_delay_level = self.reload_delay
 

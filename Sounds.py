@@ -2,26 +2,53 @@ import pygame
 
 pygame.mixer.init()
 
-kiki_shot = pygame.mixer.Sound('sounds/кирилл-стреляет.wav')
-kiki_death = pygame.mixer.Sound('sounds/кирилла-убили.wav')
-kiki_hit = pygame.mixer.Sound('sounds/в-кирилла-попали.wav')
+dada_sounds = {'shot': pygame.mixer.Sound('sounds/family/dada_shot.wav'),
+               'hit': pygame.mixer.Sound('sounds/family/dada_hit.wav'),
+               'death': pygame.mixer.Sound('sounds/family/dada_death.wav'),
+               'phrases': [pygame.mixer.Sound('sounds/family/dada_phrase_1.wav'),
+                           pygame.mixer.Sound('sounds/family/dada_phrase_2.wav'),
+                           pygame.mixer.Sound('sounds/family/dada_phrase_3.wav')]}
 
-dada_shot = pygame.mixer.Sound('sounds/даня-стреляет.wav')
-dada_death = pygame.mixer.Sound('sounds/даню-убили.wav')
-dada_hit = pygame.mixer.Sound('sounds/в-даню-попали.wav')
+
+kiki_sounds = {'shot': pygame.mixer.Sound('sounds/family/kiki_shot.wav'),
+               'hit': pygame.mixer.Sound('sounds/family/kiki_hit.wav'),
+               'death': pygame.mixer.Sound('sounds/family/kiki_death.wav'),
+               'phrases': [pygame.mixer.Sound('sounds/family/kiki_phrase_1.wav'),
+                           pygame.mixer.Sound('sounds/family/kiki_phrase_2.wav'),
+                           pygame.mixer.Sound('sounds/family/kiki_phrase_3.wav')]}
+
+
+vava_sounds = {'shot': pygame.mixer.Sound('sounds/family/vava_shot.wav'),
+               'hit': pygame.mixer.Sound('sounds/family/vava_hit.wav'),
+               'death': pygame.mixer.Sound('sounds/family/vava_death.wav'),
+               'phrases': [pygame.mixer.Sound('sounds/family/vava_phrase_1.wav'),
+                           pygame.mixer.Sound('sounds/family/vava_phrase_2.wav'),
+                           pygame.mixer.Sound('sounds/family/vava_phrase_3.wav')]}
+
+
+papa_sounds = {'shot': pygame.mixer.Sound('sounds/family/papa_shot.wav'),
+               'hit': pygame.mixer.Sound('sounds/family/papa_hit.wav'),
+               'death': pygame.mixer.Sound('sounds/family/papa_death.wav'),
+               'phrases': [pygame.mixer.Sound('sounds/family/papa_phrase_1.wav'),
+                           pygame.mixer.Sound('sounds/family/papa_phrase_2.wav'),
+                           pygame.mixer.Sound('sounds/family/papa_phrase_3.wav')]}
+
+
+mama_sounds = {'shot': pygame.mixer.Sound('sounds/family/mama_shot.wav'),
+               'hit': pygame.mixer.Sound('sounds/family/mama_hit.wav'),
+               'death': pygame.mixer.Sound('sounds/family/mama_death.wav'),
+               'phrases': [pygame.mixer.Sound('sounds/family/mama_phrase_1.wav'),
+                           pygame.mixer.Sound('sounds/family/mama_phrase_2.wav'),
+                           pygame.mixer.Sound('sounds/family/mama_phrase_3.wav')]}
+
+
+character_sounds = [dada_sounds, kiki_sounds, vava_sounds, papa_sounds, mama_sounds]
 
 win_sound = pygame.mixer.Sound('sounds/win.wav')
 switch_sound = pygame.mixer.Sound('sounds/switch.wav')
 pick_sound = pygame.mixer.Sound('sounds/pick.wav')
 
-pick_sound.set_volume(0.5)
-switch_sound.set_volume(0.5)
-kiki_hit.set_volume(0.5)
-kiki_death.set_volume(0.6)
-kiki_shot.set_volume(0.1)
+kiki_sounds['shot'].set_volume(0.5)
+kiki_sounds['phrases'][0].set_volume(1.5)
+kiki_sounds['phrases'][1].set_volume(1.5)
 
-win_sound.set_volume(0.5)
-
-dada_hit.set_volume(0.5)
-dada_death.set_volume(0.6)
-dada_shot.set_volume(0.15)

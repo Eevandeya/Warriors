@@ -1,7 +1,9 @@
 import Constants
 import pygame
-from Sounds import switch_sound, pick_sound
+from random import choice
+from Sounds import switch_sound, pick_sound, character_sounds
 from Screen import display_character_frames, display_picking_character_name
+
 
 class PickingPanel:
     def __init__(self, side):
@@ -19,6 +21,8 @@ class PickingPanel:
         self.side = side
         self.pointer = 0
         self.picked = False
+        self.phrase_timer = 20
+        self.sound_played = False
 
     def control(self):
         if not self.movement_delay_level:
@@ -38,6 +42,14 @@ class PickingPanel:
                 if keys[self.control_buttons['pick']]:
                     self.picked = True
                     pick_sound.play()
+
+            else:
+                if self.phrase_timer:
+                    self.phrase_timer -= 1
+                elif not self.sound_played:
+                    self.sound_played = True
+                    choice(character_sounds[self.pointer]['phrases']).play()
+
 
     def update(self):
         if self.side == 'top':

@@ -1,6 +1,6 @@
 import pygame
-from Screen import screen, battlefield, red_wins_background, blue_wins_background, \
-    choosing_field
+from Screen import screen, battlefield, end_screen_backround, \
+    choosing_field, win_fount, names
 from Warrior import Warrior
 import Constants
 from Bullet import RedBullet, BlueBullet
@@ -8,15 +8,16 @@ import Sounds
 import Explosions
 from PickingPanel import PickingPanel
 
+
 def kill_bullet_and_spawn_explosion():
     for bullet in red_hit_bullets:
         explosions.append(Explosions.BulletExplosion(bullet.rect.x, bullet.rect.y))
-        Sounds.dada_hit.play()
+        blue_warrior_group.sprite.hit_sound.play()
         bullet.kill()
 
     for bullet in blue_hit_bullets:
         explosions.append(Explosions.BulletExplosion(bullet.rect.x, bullet.rect.y))
-        Sounds.kiki_hit.play()
+        red_warrior_group.sprite.hit_sound.play()
         bullet.kill()
 
 
@@ -30,44 +31,38 @@ def update_explosions():
 def spawn_player_explosion(x, y):
     explosions.append(Explosions.PlayerExplosion(x, y))
     if not blue_warrior_group.sprite.isAlive:
-        Sounds.dada_death.play()
+        blue_warrior_group.sprite.death_sound.play()
     else:
-        Sounds.kiki_death.play()
+        red_warrior_group.sprite.death_sound.play()
+
 
 def reset_game():
-    global game_stage, end_screen_delay, explosions, winner, play_win_sound, \
-        blue_warrior_group, red_warrior_group, red_bullets_group, blue_bullets_group
+    blue_warrior_group.empty()
+    red_warrior_group.empty()
 
-    # Создание группы красного игрока
-    red_warrior_group = pygame.sprite.GroupSingle()
-    red_warrior_group.add(Warrior('bottom'))
-
-    # Создание группы синего игрока
-    blue_warrior_group = pygame.sprite.GroupSingle()
-    blue_warrior_group.add(Warrior('top'))
-
-    # Создание групп синих и красных пуль и списка взрывов
     red_bullets_group = pygame.sprite.Group()
     blue_bullets_group = pygame.sprite.Group()
 
-    # Вспомогательные изменяемые параметры
-    game_stage = 'battle'
+    game_stage = 'pick'
     end_screen_delay = Constants.ENDSCREEN_DELAY
     explosions = []
     winner = None
     play_win_sound = True
+
+    top_pick_panel = PickingPanel('top')
+    bottom_pick_panel = PickingPanel('bottom')
+    start_timer = 100
+    countdown = False
+
+    globals().update(locals())
 
 
 pygame.init()
 
 clock = pygame.time.Clock()
 
-red_warrior_group = pygame.sprite.GroupSingle()
-red_warrior_group.add(Warrior('bottom'))
-
-# Создание группы синего игрока
 blue_warrior_group = pygame.sprite.GroupSingle()
-blue_warrior_group.add(Warrior('top'))
+red_warrior_group = pygame.sprite.GroupSingle()
 
 # Создание групп синих и красных пуль и списка взрывов
 red_bullets_group = pygame.sprite.Group()
@@ -82,6 +77,8 @@ play_win_sound = True
 
 top_pick_panel = PickingPanel('top')
 bottom_pick_panel = PickingPanel('bottom')
+start_timer = 100
+countdown = False
 
 while True:
     # Закрытие игры при нажатии крестика
@@ -99,6 +96,18 @@ while True:
         screen.blit(choosing_field, (0, 0))
         top_pick_panel.update()
         bottom_pick_panel.update()
+
+        if top_pick_panel.picked and bottom_pick_panel.picked and not countdown:
+            countdown = True
+            # Создание группы синего игрока
+            red_warrior_group.add(Warrior('bottom', bottom_pick_panel.pointer))
+            blue_warrior_group.add(Warrior('top', top_pick_panel.pointer))
+
+        if countdown:
+            start_timer -= 1
+
+        if not start_timer:
+            game_stage = 'battle'
 
     else:
         screen.fill('#dcdcdc')
@@ -170,7 +179,11 @@ while True:
                 red_warrior_group.draw(screen)
                 if blue_hit_bullets:
                     kill_bullet_and_spawn_explosion()
-                end_screen = red_wins_background
+
+                winner_num = red_warrior_group.sprite.character
+                end_screen = end_screen_backround
+                a = win_fount.render(names[winner_num], False, Constants.RED)
+                b = win_fount.render('wins', False, Constants.BLACK)
 
                 red_shot = red_warrior_group.sprite.warrior_shots()
                 if red_shot != False:
@@ -180,7 +193,11 @@ while True:
                 blue_warrior_group.draw(screen)
                 if red_hit_bullets:
                     kill_bullet_and_spawn_explosion()
-                end_screen = blue_wins_background
+
+                winner_num = blue_warrior_group.sprite.character
+                end_screen = end_screen_backround
+                a = win_fount.render(names[winner_num], False, Constants.BLUE)
+                b = win_fount.render('wins', False, Constants.BLACK)
 
                 blue_shot = blue_warrior_group.sprite.warrior_shots()
                 if blue_shot != False:
@@ -194,6 +211,8 @@ while True:
                 play_win_sound = False
 
                 screen.blit(end_screen, (0, 0))
+                screen.blit(a, (Constants.WINNER_XS[winner_num], Constants.WINNER_NAME_Y))
+                screen.blit(b, (Constants.WINS_WORD_X, Constants.WINS_WORD_Y))
             else:
                 end_screen_delay -= 1
 
