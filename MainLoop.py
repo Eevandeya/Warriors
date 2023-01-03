@@ -13,10 +13,7 @@ class Game:
     def new_game(self):
         self.game_stage = 'pick'
         self.picking_screen = PickingScreen(self)
-        self.red_warrior_group = pygame.sprite.GroupSingle()
-        self.blue_warrior_group = pygame.sprite.GroupSingle()
         self.battle = Battle(self)
-
 
     def check_events(self):
         for event in pygame.event.get():

@@ -9,6 +9,7 @@ class BulletExplosion(Animation):
     def __init__(self, x, y):
         super().__init__(x - 6, y - 3)
 
+
     def update(self, screen):
         if self.lifetime == 14:
             return True
@@ -16,6 +17,7 @@ class BulletExplosion(Animation):
             screen.display_bullet_explosion(self.lifetime, self.x, self.y)
             self.lifetime += 1
             return False
+
 
 class PlayerExplosion(Animation):
     def __init__(self, x, y):

@@ -82,8 +82,8 @@ class PickingScreen:
         if self.top_panel.picked and self.bottom_panel.picked and not self.countdown:
             self.countdown = True
             # Создание группы синего игрока
-            self.game.red_warrior_group.add(Warrior('bottom', self.bottom_panel.pointer, self.game.screen))
-            self.game.blue_warrior_group.add(Warrior('top', self.top_panel.pointer, self.game.screen))
+            self.game.battle.red_warrior_group.add(Warrior('bottom', self.bottom_panel.pointer, self.game.screen))
+            self.game.battle.blue_warrior_group.add(Warrior('top', self.top_panel.pointer, self.game.screen))
 
         if self.countdown:
             self.start_timer -= 1
