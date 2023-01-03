@@ -1,34 +1,31 @@
 import pygame
-import Screen
 
-class RedBullet(pygame.sprite.Sprite):
-    def __init__(self, warrior_pos):
+class GunBullet(pygame.sprite.Sprite):
+    def __init__(self, warrior_pos, side, screen):
         warrior_x, warrior_y = warrior_pos
         super().__init__()
-        self.image = Screen.red_bullet
+        speed = 8
+        self.side = side
+
+        if side == 'bottom':
+            self.image = screen.red_bullet
+            self.speed = -speed
+            self.border = 30
+        else:
+            self.image = screen.blue_bullet
+            self.speed = speed
+            self.border = 512 + 30
+
         self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
-        self.speed = 8
-
-    def update(self):
-        self.rect.y -= self.speed
-        self.destroy()
-
-    def destroy(self):
-        if self.rect.y <= -30:
-            self.kill()
-
-
-class BlueBullet(pygame.sprite.Sprite):
-    def __init__(self, warrior_pos):
-        warrior_x, warrior_y = warrior_pos
-        super().__init__()
-        self.image = Screen.blue_bullet
-        self.rect = self.image.get_rect(topleft=(warrior_x + 6, warrior_y))
-        self.speed = 9
 
     def update(self):
         self.rect.y += self.speed
+        self.destroy()
 
     def destroy(self):
-        if self.rect.y > 512 + 30:
-            self.kill()
+        if self.side == 'bottom':
+            if self.rect.y < self.border:
+                self.kill()
+        else:
+            if self.rect.y > self.border:
+                self.kill()

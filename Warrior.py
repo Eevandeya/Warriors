@@ -1,16 +1,16 @@
 import pygame
 import Constants
 import Sounds
-from Screen import display_heals, display_ammo, full_heart, empty_heart, family
 
 class Warrior(pygame.sprite.Sprite):
-    def __init__(self, game_side, character):
+    def __init__(self, game_side, character, screen):
         super().__init__()
 
-        self.hearts = [full_heart, full_heart, full_heart]
+        self.hearts = [screen.full_heart, screen.full_heart, screen.full_heart]
+        self.empty_heart = screen.empty_heart
 
         self.character = character
-        self.image = family[character]
+        self.image = screen.family[character]
 
         self.hit_sound = Sounds.hit_sound
         self.shot_sound = Sounds.shot_sound
@@ -91,7 +91,7 @@ class Warrior(pygame.sprite.Sprite):
     def do_damage(self, bullets_num):
         for _ in range(bullets_num):
             self.heals -= 1
-            self.hearts.append(empty_heart)
+            self.hearts.append(self.empty_heart)
             self.hearts.pop(0)
 
     def reload(self):
@@ -112,13 +112,13 @@ class Warrior(pygame.sprite.Sprite):
                     self.ammo += 1
                     self.ammo_reload_level = 0
 
-    def update(self):
+    def update(self, screen):
         if self.isAlive:
             self.warrior_control()
             self.reload()
 
-        display_ammo(self.ammo, self.stats_line_level)
-        display_heals(self.hearts, self.stats_line_level)
+        screen.display_ammo(self.ammo, self.stats_line_level)
+        screen.display_heals(self.hearts, self.stats_line_level)
 
         if self.fire_delay_level:
             self.fire_delay_level -= 1
