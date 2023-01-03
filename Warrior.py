@@ -12,22 +12,9 @@ class Warrior(pygame.sprite.Sprite):
         self.character = character
         self.image = family[character]
 
-        sound_dict = {}
-        if character == 0:
-            sound_dict = Sounds.dada_sounds
-        elif character == 1:
-            sound_dict = Sounds.kiki_sounds
-        elif character == 2:
-            sound_dict = Sounds.vava_sounds
-        elif character == 3:
-            sound_dict = Sounds.papa_sounds
-        elif character == 4:
-            sound_dict = Sounds.mama_sounds
-
-        self.hit_sound = sound_dict['hit']
-        self.shot_sound = sound_dict['shot']
-        self.death_sound = sound_dict['death']
-        self.phrases = sound_dict['phrases']
+        self.hit_sound = Sounds.hit_sound
+        self.shot_sound = Sounds.shot_sound
+        self.death_sound = Sounds.explosion_sound
 
         if game_side == 'top':
             self.borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}

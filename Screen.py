@@ -95,11 +95,11 @@ player_explosion_images = [pygame.transform.scale2x(im) for im in player_explosi
 red_bullet = pygame.image.load('images/scene/red_bullet.png').convert_alpha()
 blue_bullet = pygame.image.load('images/scene/blue_bullet.png').convert_alpha()
 
-dada = pygame.image.load('images/family_warriors/dada.png').convert_alpha()
-kiki = pygame.image.load('images/family_warriors/kiki.png').convert_alpha()
-vava = pygame.image.load('images/family_warriors/vava.png').convert_alpha()
-papa = pygame.image.load('images/family_warriors/papa.png').convert_alpha()
-mama = pygame.image.load('images/family_warriors/mama.png').convert_alpha()
+dada = pygame.image.load('images/family_warriors/red.png').convert_alpha()
+kiki = pygame.image.load('images/family_warriors/blue.png').convert_alpha()
+vava = pygame.image.load('images/family_warriors/green.png').convert_alpha()
+papa = pygame.image.load('images/family_warriors/yellow.png').convert_alpha()
+mama = pygame.image.load('images/family_warriors/purple.png').convert_alpha()
 
 family = [dada, kiki, vava, papa, mama]
 
