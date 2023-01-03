@@ -3,6 +3,7 @@ import pygame
 import Sounds
 from Warrior import Warrior
 
+
 class PickingPanel:
     def __init__(self, side, screen):
         if side == 'top':
@@ -50,7 +51,6 @@ class PickingPanel:
                     self.phrase_timer -= 1
                 elif not self.sound_played:
                     self.sound_played = True
-
 
     def update(self):
         if self.side == 'top':

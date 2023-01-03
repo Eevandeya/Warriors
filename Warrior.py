@@ -2,6 +2,7 @@ import pygame
 import Constants
 import Sounds
 
+
 class Warrior(pygame.sprite.Sprite):
     def __init__(self, game_side, character, screen):
         super().__init__()

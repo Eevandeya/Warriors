@@ -1,14 +1,16 @@
-import pygame
 from PickingScreen import *
 from Battle import *
 from Screen import *
+
 
 class Game:
     def __init__(self):
         pygame.init()
         self.clock = pygame.time.Clock()
         self.screen = Screen()
-        self.new_game()
+        self.game_stage = 'pick'
+        self.picking_screen = PickingScreen(self)
+        self.battle = Battle(self)
 
     def new_game(self):
         self.game_stage = 'pick'

@@ -1,5 +1,6 @@
 import pygame
 
+
 class GunBullet(pygame.sprite.Sprite):
     def __init__(self, warrior_pos, side, screen):
         warrior_x, warrior_y = warrior_pos

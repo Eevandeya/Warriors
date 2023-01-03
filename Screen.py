@@ -1,6 +1,7 @@
 import pygame as pg
 import Constants
 
+
 class Screen:
     def __init__(self):
         self.screen = pg.display.set_mode((Constants.WIDTH, Constants.HEIGHT))
@@ -73,7 +74,7 @@ class Screen:
         green_mama_nickname = self.pixel_font.render('mama', False, Constants.DARK_GREEN)
 
         self.green_family_nicknames = [green_dada_nickname, green_kiki_nickname, green_vava_nickname,
-                                  green_papa_nickname, green_mama_nickname]
+                                       green_papa_nickname, green_mama_nickname]
 
         self.family_nicknames = [dada_nickname, kiki_nickname, vava_nickname, papa_nickname, mama_nickname]
 
@@ -92,11 +93,9 @@ class Screen:
 
             self.screen.blit(self.family[i], (i * Constants.GAP_BETWEEN_FRAMES + 46, line + 25))
 
-
     def display_heals(self, hearts, line):
         for i, heart in enumerate(hearts):
             self.screen.blit(heart, (i * Constants.GAP_BETWEEN_HEARTS + Constants.HEART_INDENT, line))
-
 
     def display_ammo(self, ammo, line):
         number = 0
@@ -104,20 +103,18 @@ class Screen:
             self.screen.blit(self.full_bullet, (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
             number += 1
         for i in range(5 - number):
-            self.screen.blit(self.empty_bullet, (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
+            self.screen.blit(self.empty_bullet,
+                             (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
             number += 1
-
 
     def display_bullet_explosion(self, lifetime, x, y):
         self.screen.blit(self.bullet_explosion_images[lifetime // 3], (x - 5, y - 5))
 
-
     def display_player_explosion(self, lifetime, x, y):
         self.screen.blit(self.player_explosion_images[lifetime // 5], (x - 16, y - 16))
 
-
-    def display_picking_character_name(self, pointer, line, isPicked):
-        if isPicked:
+    def display_picking_character_name(self, pointer, line, is_picked):
+        if is_picked:
             self.screen.blit(self.chosen_nickname_frame, (Constants.NICKNAME_FRAME_INDENT, line))
             if pointer == 1:
                 self.screen.blit(self.green_family_nicknames[pointer], (Constants.NICKNAME_INDENT + 32, line + 22))
