@@ -88,75 +88,62 @@ class LaserGun:
         self.play_damage_sound()
 
         if self.warrior.is_top_side:
-            sign = -1
-            front = self.warrior.rect.bottom
-            y = front
-        else:
-            front = self.warrior.rect.top
-            sign = 1
-            y = front - 20
+            y = self.warrior.rect.bottom
+            x = self.warrior.rect.left + 12
 
+            if enemy_front - self.warrior.rect.top <= 20 * self.max_length \
+                    and (self.warrior.rect.left + 12) < enemy_right \
+                    and (self.warrior.rect.right - 12) > enemy_left:
 
-        # if not self.warrior.is_top_side:
-        x = self.warrior.rect.left + 12
+                self.damaging = True
+                dist = enemy_front - self.warrior.rect.top
+                self.length = dist // 20
+                self.last_enemy_front = enemy_front
 
-        if sign*(front - enemy_front) <= 20*self.max_length \
-                and (self.warrior.rect.left + 12) < enemy_right \
-                and (self.warrior.rect.right - 12) > enemy_left:
-
-            self.damaging = True
-            dist = abs(front - enemy_front)
-            self.length = dist // 20
-            self.last_enemy_front = enemy_front
-
-        else:
-            self.damaging = False
-            self.length = self.max_length
-
-        for i in range(self.length):
-            self.visual.screen.blit(choice(self.laser_frames), (x, y - sign*i*20))
-
-        if self.damaging:
-            if self.warrior.is_top_side:
-                self.visual.screen.blit(choice(self.laser_frames), (x, enemy_front - 20))
             else:
-                self.visual.screen.blit(choice(self.laser_frames), (x, enemy_front))
+                self.damaging = False
+                self.length = self.max_length
 
-            self.visual.screen.blit(self.visual.laser_on_player, (x - 4, enemy_front))
+            for i in range(self.length):
+                self.visual.screen.blit(choice(self.laser_frames), (x, y + i * 20))
+
+            if self.damaging:
+                self.visual.screen.blit(choice(self.laser_frames), (x, enemy_front - 20))
+                # self.visual.screen.blit(self.visual.laser_on_player, (x - 4, enemy_front))
+            else:
+                self.visual.screen.blit(self.visual.laser_explosion, (x - 4, y + self.max_length * 20 - 10))
+
+            return self.damaging
+
         else:
-            self.visual.screen.blit(self.visual.laser_explosion, (x - 4, y - sign*self.max_length * 20 + sign*10))
 
-        return self.damaging
+            y = self.warrior.rect.top - 20
+            x = self.warrior.rect.left + 12
 
+            if self.warrior.rect.top - enemy_front <= 20 * self.max_length \
+                    and (self.warrior.rect.left + 12) < enemy_right \
+                    and (self.warrior.rect.right - 12) > enemy_left:
 
-        # else:
-        #     y = self.warrior.rect.bottom - 20
-        #     x = self.warrior.rect.left + 12
-        #
-        #     if enemy_front - self.warrior.rect.top <= 20 * self.max_length \
-        #             and (self.warrior.rect.left + 12) < enemy_right \
-        #             and (self.warrior.rect.right - 12) > enemy_left:
-        #
-        #         self.damaging = True
-        #         dist = enemy_front - self.warrior.rect.top
-        #         self.length = dist // 20
-        #         self.last_enemy_front = enemy_front
-        #
-        #     else:
-        #         self.damaging = False
-        #         self.length = self.max_length
-        #
-        #     for i in range(self.length):
-        #         self.visual.screen.blit(choice(self.laser_frames), (x, y + i * 20))
-        #
-        #     if self.damaging:
-        #         self.visual.screen.blit(choice(self.laser_frames), (x, enemy_front))
-        #         self.visual.screen.blit(self.visual.laser_on_player, (x - 5, enemy_front))
-        #     else:
-        #         self.visual.screen.blit(self.visual.laser_explosion, (x - 5, y + self.max_length * 20 - 10))
-        #
-        #     return self.damaging
+                self.damaging = True
+                dist = self.warrior.rect.top - enemy_front
+                self.length = dist // 20
+                self.last_enemy_front = enemy_front
 
+            else:
+                self.damaging = False
+                self.length = self.max_length
+
+            for i in range(self.length):
+                print(i)
+                self.visual.screen.blit(choice(self.laser_frames), (x, y - i * 20))
+
+            if self.damaging:
+                self.visual.screen.blit(choice(self.laser_frames), (x, enemy_front))
+                self.visual.screen.blit(self.visual.laser_on_player, (x - 4, enemy_front))
+            else:
+                self.visual.screen.blit(self.visual.laser_explosion, (x - 4, y - self.max_length * 20 + 10))
+
+            return self.damaging
 
     def melt_laser(self, animations_list):
         if self.active:
