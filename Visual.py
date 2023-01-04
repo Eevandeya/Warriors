@@ -2,10 +2,11 @@ import pygame as pg
 import Constants
 
 
-class Screen:
+class Visual:
     def __init__(self):
         self.screen = pg.display.set_mode((Constants.WIDTH, Constants.HEIGHT))
         pg.display.set_caption('Warriors')
+        pg.font.init()
 
         self.battlefield = pg.image.load('images/scene/battlefield2.png').convert_alpha()
         self.choosing_field = pg.image.load('images/choosing_field.png').convert_alpha()
@@ -57,8 +58,6 @@ class Screen:
 
         self.family = [self.dada, self.kiki, self.vava, self.papa, self.mama]
 
-        pg.font.init()
-
         self.pixel_font = pg.font.Font('font/Pixeltype.ttf', 100)
 
         dada_nickname = self.pixel_font.render('dada', False, Constants.BLACK)
@@ -88,54 +87,30 @@ class Screen:
         self.laser_explosion = pg.image.load('images/laser_explosion.png').convert_alpha()
         self.laser_on_player = pg.image.load('images/player_to_laser.png').convert_alpha()
 
-        self.laser_animation = [pg.image.load('images/laser_animation/frame0.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/frame1.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/frame2.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/frame3.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/frame4.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/frame5.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/frame6.png').convert_alpha()]
+        self.laser_animation = [pg.image.load('images/laser_animation/active_laser/frame0.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/active_laser/frame1.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/active_laser/frame2.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/active_laser/frame3.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/active_laser/frame4.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/active_laser/frame5.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/active_laser/frame6.png').convert_alpha()]
 
-    def display_character_frames(self, line, pointer):
-        for i in range(5):
-            if i == pointer:
-                self.screen.blit(self.chosen_frame, (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
-            else:
-                self.screen.blit(self.empty_frame, (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
+        self.laser_melting_stage_1 = [pg.image.load('images/laser_animation/laser_melting/stage_1/frame0.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame1.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame3.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame4.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame5.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame6.png').convert_alpha()]
 
-            self.screen.blit(self.family[i], (i * Constants.GAP_BETWEEN_FRAMES + 46, line + 25))
+        self.laser_melting_stage_2 = [pg.image.load('images/laser_animation/laser_melting/stage_2/frame0.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame1.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame3.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame4.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame5.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame6.png').convert_alpha()]
 
-    def display_heals(self, hearts, line):
-        for i, heart in enumerate(hearts):
-            self.screen.blit(heart, (i * Constants.GAP_BETWEEN_HEARTS + Constants.HEART_INDENT, line))
+        self.laser_melting_stage_3 = [pg.image.load('images/laser_animation/laser_melting/stage_3/frame0.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_3/frame1.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_3/frame2.png').convert_alpha(),
+                                      pg.image.load('images/laser_animation/laser_melting/stage_3/frame3.png').convert_alpha()]
 
-    def display_ammo(self, ammo, line):
-        number = 0
-        for i in range(ammo):
-            self.screen.blit(self.full_bullet, (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
-            number += 1
-        for i in range(5 - number):
-            self.screen.blit(self.empty_bullet,
-                             (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
-            number += 1
-
-    def display_bullet_explosion(self, lifetime, x, y):
-        self.screen.blit(self.bullet_explosion_images[lifetime // 3], (x - 5, y - 5))
-
-    def display_player_explosion(self, lifetime, x, y):
-        self.screen.blit(self.player_explosion_images[lifetime // 5], (x - 16, y - 16))
-
-    def display_picking_character_name(self, pointer, line, is_picked):
-        if is_picked:
-            self.screen.blit(self.chosen_nickname_frame, (Constants.NICKNAME_FRAME_INDENT, line))
-            if pointer == 1:
-                self.screen.blit(self.green_family_nicknames[pointer], (Constants.NICKNAME_INDENT + 32, line + 22))
-            else:
-                self.screen.blit(self.green_family_nicknames[pointer], (Constants.NICKNAME_INDENT, line + 22))
-
-        else:
-            self.screen.blit(self.empty_nickname_frame, (Constants.NICKNAME_FRAME_INDENT, line))
-            if pointer == 1:
-                self.screen.blit(self.family_nicknames[pointer], (Constants.NICKNAME_INDENT + 32, line + 22))
-            else:
-                self.screen.blit(self.family_nicknames[pointer], (Constants.NICKNAME_INDENT, line + 22))
