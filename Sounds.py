@@ -11,3 +11,5 @@ pick_sound = pg.mixer.Sound('sounds/pick.wav')
 
 laser_sound = pg.mixer.Sound('sounds/laser_sound.wav')
 laser_damage_sound = pg.mixer.Sound('sounds/laser_hit.wav')
+
+laser_sound.set_volume(1.5)

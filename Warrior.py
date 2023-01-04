@@ -191,7 +191,7 @@ class Laser(BaseWarrior):
         self.rect = self.image.get_rect(topleft=(self.start_x, self.start_y))
 
         self.speed = 3
-        self.heals = 3
+        self.health = 1000
         self.laser_gun = LaserGun(self, visual)
         self.damage = 1
 
@@ -199,11 +199,10 @@ class Laser(BaseWarrior):
         keys = pygame.key.get_pressed()
 
         if keys[self.control_buttons['fire']]:
-
-            if not self.is_top_side:
-                hit = self.laser_gun.activate(enemy.rect.left, enemy.rect.right, enemy.rect.bottom)
-                if hit:
-                    enemy.get_damage(self.damage)
+            enemy_front = enemy.rect.top if self.is_top_side else enemy.rect.bottom
+            hit = self.laser_gun.activate(enemy.rect.left, enemy.rect.right, enemy_front)
+            if hit:
+                enemy.get_damage(self.damage)
 
         else:
             self.laser_gun.melt_laser(animations)

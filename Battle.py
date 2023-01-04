@@ -45,6 +45,7 @@ class Battle:
             self.update_animations()
 
         elif self.game.game_stage == 'end':
+            self.update_animations()
 
             # В двух ветвях происходит отрисовка победителя, обработка пуль противников, определение эндскрина
             # Обработка выстрелов победителя
@@ -67,6 +68,4 @@ class Battle:
 
             else:
                 self.end_screen_delay -= 1
-
-            self.update_animations()
 
