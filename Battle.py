@@ -1,8 +1,6 @@
 import pygame
 import Sounds
-from Arsenal import GunBullet
 import Constants
-import Animations
 
 
 class Battle:
