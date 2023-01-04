@@ -8,9 +8,6 @@ import Animations
 class Battle:
     def __init__(self, game):
         self.game = game
-        self.red_bullets_group = pygame.sprite.Group()
-        self.blue_bullets_group = pygame.sprite.Group()
-        self.winner = None
         self.end_screen_delay = Constants.ENDSCREEN_DELAY
         self.play_win_sound = True
         self.animations = []
