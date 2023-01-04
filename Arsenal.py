@@ -91,12 +91,12 @@ class LaserGun:
             y = self.warrior.rect.bottom
             x = self.warrior.rect.left + 12
 
-            if enemy_front - self.warrior.rect.top <= 20 * self.max_length \
+            if enemy_front - self.warrior.rect.bottom <= 20 * self.max_length \
                     and (self.warrior.rect.left + 12) < enemy_right \
                     and (self.warrior.rect.right - 12) > enemy_left:
 
                 self.damaging = True
-                dist = enemy_front - self.warrior.rect.top
+                dist = enemy_front - self.warrior.rect.bottom
                 self.length = dist // 20
                 self.last_enemy_front = enemy_front
 
