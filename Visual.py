@@ -95,22 +95,24 @@ class Visual:
                                 pg.image.load('images/laser_animation/active_laser/frame5.png').convert_alpha(),
                                 pg.image.load('images/laser_animation/active_laser/frame6.png').convert_alpha()]
 
-        self.laser_melting_stage_1 = [pg.image.load('images/laser_animation/laser_melting/stage_1/frame0.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame1.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame3.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame4.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame5.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_1/frame6.png').convert_alpha()]
+        self.laser_melting_stage_1 = \
+            [pg.image.load('images/laser_animation/laser_melting/stage_1/frame0.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_1/frame1.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_1/frame3.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_1/frame4.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_1/frame5.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_1/frame6.png').convert_alpha()]
 
-        self.laser_melting_stage_2 = [pg.image.load('images/laser_animation/laser_melting/stage_2/frame0.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame1.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame3.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame4.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame5.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_2/frame6.png').convert_alpha()]
+        self.laser_melting_stage_2 = \
+            [pg.image.load('images/laser_animation/laser_melting/stage_2/frame0.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_2/frame1.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_2/frame3.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_2/frame4.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_2/frame5.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_2/frame6.png').convert_alpha()]
 
-        self.laser_melting_stage_3 = [pg.image.load('images/laser_animation/laser_melting/stage_3/frame0.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_3/frame1.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_3/frame2.png').convert_alpha(),
-                                      pg.image.load('images/laser_animation/laser_melting/stage_3/frame3.png').convert_alpha()]
-
+        self.laser_melting_stage_3 = \
+            [pg.image.load('images/laser_animation/laser_melting/stage_3/frame0.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_3/frame1.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_3/frame2.png').convert_alpha(),
+             pg.image.load('images/laser_animation/laser_melting/stage_3/frame3.png').convert_alpha()]

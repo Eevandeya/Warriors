@@ -1,12 +1,16 @@
 import pygame
 import Constants
 import Sounds
-from Bullet import LaserGun
+from Arsenal import LaserGun, GunBullet
+from Animations import PlayerExplosion
 
 
 class BaseWarrior(pygame.sprite.Sprite):
     def __init__(self, game_side, visual):
         super().__init__()
+
+        self.hearts = [visual.full_heart, visual.full_heart, visual.full_heart]
+        self.empty_heart = visual.empty_heart
 
         if game_side == 'top':
             self.borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
@@ -32,8 +36,8 @@ class BaseWarrior(pygame.sprite.Sprite):
         self.speed = 3
         self.health = 3
         self.isAlive = True
-        self.game_side = game_side
         self.visual = visual
+        self.death_played = False
 
     def control(self):
         keys = pygame.key.get_pressed()
@@ -54,20 +58,31 @@ class BaseWarrior(pygame.sprite.Sprite):
     def display_ammo(self, ammo, line):
         number = 0
         for i in range(ammo):
-            self.visual.screen.blit(self.visual.full_bullet, (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
+            self.visual.screen.blit(self.visual.full_bullet,
+                                    (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
             number += 1
         for i in range(5 - number):
             self.visual.screen.blit(self.visual.empty_bullet,
-                             (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
+                                    (number * Constants.GAP_BETWEEN_BULLETS + Constants.BULLET_INDENT, line))
             number += 1
+
+    def get_damage(self, damage):
+        self.health -= damage
+        self.hearts.append(self.empty_heart)
+        self.hearts.pop(0)
+
+    def death(self, animations):
+        Sounds.explosion_sound.play()
+        animations.append(PlayerExplosion(self.rect.x + 16, self.rect.y + 16))
+        self.rect.x = 500
+        self.rect.y = 500
+        self.isAlive = False
+        self.death_played = True
 
 
 class Gunslinger(BaseWarrior):
     def __init__(self, game_side, character, visual):
         super().__init__(game_side, visual)
-
-        self.hearts = [visual.full_heart, visual.full_heart, visual.full_heart]
-        self.empty_heart = visual.empty_heart
 
         self.character = character
         self.image = visual.family[character]
@@ -88,15 +103,17 @@ class Gunslinger(BaseWarrior):
         # Скорость перезарядки (больше - медленнее перезарядка)
         self.ammo_reload = 30
 
-        self.speed = 3
-        self.heals = 3
+        self.bullet_speed = 8
+
         self.ammo = 5
 
         self.fire_delay_level = 0
         self.reload_delay_level = 0
         self.ammo_reload_level = 0
 
-    def shots(self):
+        self.bullets_group = pygame.sprite.Group()
+
+    def shooting(self):
         keys = pygame.key.get_pressed()
 
         if not self.fire_delay_level and self.ammo:
@@ -108,14 +125,8 @@ class Gunslinger(BaseWarrior):
                 self.reload_delay_level = self.reload_delay
 
                 # (+ 6) чтобы пуля выходила из середины игрока, иначе смещена влево
-                return self.rect.x + 6, self.rect.y
-        return False
-
-    def do_damage(self, bullets_num):
-        for _ in range(bullets_num):
-            self.heals -= 1
-            self.hearts.append(self.empty_heart)
-            self.hearts.pop(0)
+                self.bullets_group.add(GunBullet((self.rect.x + 6, self.rect.y),
+                                                 self.is_top_side, self.visual, self.bullet_speed))
 
     def reload(self):
 
@@ -135,13 +146,27 @@ class Gunslinger(BaseWarrior):
                     self.ammo += 1
                     self.ammo_reload_level = 0
 
-    def update(self):
+    def update(self, enemy, animations):
         if self.isAlive:
             self.control()
             self.reload()
+            self.shooting()
 
         self.display_ammo(self.ammo, self.stats_line_level)
         self.display_heals(self.hearts, self.stats_line_level)
+
+        self.bullets_group.draw(self.visual.screen)
+        self.bullets_group.update()
+
+        hit_bullets = pygame.sprite.spritecollide(enemy, self.bullets_group, False)
+
+        if hit_bullets:
+            for bullet in hit_bullets:
+                bullet.hit(animations, (enemy.health != 1))
+                enemy.get_damage(1)
+
+        if self.health <= 0 and not self.death_played:
+            self.death(animations)
 
         if self.fire_delay_level:
             self.fire_delay_level -= 1
@@ -167,27 +192,22 @@ class Laser(BaseWarrior):
         self.heals = 3
         self.laser_gun = LaserGun(self, visual)
 
-    def shots(self, game):
+    def shots(self, enemy, animations):
         keys = pygame.key.get_pressed()
 
         if keys[self.control_buttons['fire']]:
-            if self.game_side == 'bottom':
-                self.laser_gun.activate(game.battle.blue_warrior_group.sprite.rect.left,
-                                        game.battle.blue_warrior_group.sprite.rect.right,
-                                        game.battle.blue_warrior_group.sprite.rect.bottom)
+            if not self.is_top_side:
+                self.laser_gun.activate(enemy.rect.left, enemy.rect.right, enemy.rect.bottom)
         else:
-            self.laser_gun.melt_laser(game.battle.animations, game.visual)
+            self.laser_gun.melt_laser(animations)
 
-    def do_damage(self, bullets_num):
-        for _ in range(bullets_num):
-            self.heals -= 1
-            self.hearts.append(self.empty_heart)
-            self.hearts.pop(0)
-
-    def update(self, game):
+    def update(self, enemy, animations):
         if self.isAlive:
             self.control()
-            self.shots(game)
+            self.shots(enemy, animations)
 
         self.display_ammo(5, self.stats_line_level)
         self.display_heals(self.hearts, self.stats_line_level)
+
+        if self.health <= 0 and not self.death_played:
+            self.death(animations)

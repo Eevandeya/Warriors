@@ -1,6 +1,6 @@
 import pygame
 import Sounds
-from Bullet import GunBullet
+from Arsenal import GunBullet
 import Constants
 import Animations
 
@@ -24,101 +24,27 @@ class Battle:
             if isdead:
                 self.animations.remove(animation)
 
-    def spawn_player_explosion(self, x, y):
-        self.animations.append(Animations.PlayerExplosion(x, y))
-        if not self.blue_warrior_group.sprite.isAlive:
-            self.blue_warrior_group.sprite.death_sound.play()
-        else:
-            self.red_warrior_group.sprite.death_sound.play()
-
-    def kill_bullet_and_spawn_explosions(self, bhb, rhb):
-        red_dead = False
-        blue_dead = False
-
-        for bullet in bhb:
-            if self.red_warrior_group.sprite.heals == 0:
-                self.animations.append(Animations.PlayerExplosion(self.red_warrior_group.sprite.rect.centerx,
-                                                                  self.red_warrior_group.sprite.rect.centery))
-                self.red_warrior_group.sprite.death_sound.play()
-                red_dead = True
-
-            else:
-                self.animations.append(Animations.BulletExplosion(bullet.rect.x, bullet.rect.y))
-                self.red_warrior_group.sprite.hit_sound.play()
-
-            bullet.kill()
-
-        for bullet in rhb:
-            if self.blue_warrior_group.sprite.heals == 0:
-                self.animations.append(Animations.PlayerExplosion(self.blue_warrior_group.sprite.rect.centerx,
-                                                                  self.blue_warrior_group.sprite.rect.centery))
-                self.blue_warrior_group.sprite.death_sound.play()
-                blue_dead = True
-
-            else:
-                self.animations.append(Animations.BulletExplosion(bullet.rect.x, bullet.rect.y))
-                self.blue_warrior_group.sprite.hit_sound.play()
-
-            bullet.kill()
-
-        return red_dead, blue_dead
-
     def update(self):
         self.game.visual.screen.fill('#dcdcdc')
         self.game.visual.screen.blit(self.game.visual.battlefield, (0, 150))
 
-        self.red_bullets_group.draw(self.game.visual.screen)
-        self.blue_bullets_group.draw(self.game.visual.screen)
-        self.red_bullets_group.update()
-        self.blue_bullets_group.update()
-
         # Обновление игроков
-        self.red_warrior_group.update(self.game)
-        self.blue_warrior_group.update()
-
-        # Получение списков пуль, которые попали
-        red_hit_bullets = pygame.sprite.spritecollide(self.blue_warrior_group.sprite, self.red_bullets_group, False)
-        blue_hit_bullets = pygame.sprite.spritecollide(self.red_warrior_group.sprite, self.blue_bullets_group, False)
+        self.red_warrior_group.update(self.blue_warrior_group.sprite, self.animations)
+        self.blue_warrior_group.update(self.red_warrior_group.sprite, self.animations)
 
         if self.game.game_stage == 'battle':
 
-            # Обработка выстрелов, если они есть
-            blue_shot = self.blue_warrior_group.sprite.shots()
-            # red_shot = self.red_warrior_group.sprite.shots()
-
-            if blue_shot:
-                self.blue_bullets_group.add(GunBullet(blue_shot, 'top', self.game.visual))
-            # if red_shot:
-            #     self.red_bullets_group.add(GunBullet(red_shot, 'bottom', self.game.visual))
-
-            # Если какие-то пули попали, уничтожение их, спавн взрывов
-            # и начисление повреждений игрокам
-            is_red_dead, is_blue_dead = False, False
-
-            if red_hit_bullets or blue_hit_bullets:
-
-                if red_hit_bullets:
-                    self.blue_warrior_group.sprite.do_damage(len(red_hit_bullets))
-
-                if blue_hit_bullets:
-                    self.red_warrior_group.sprite.do_damage(len(blue_hit_bullets))
-
-                is_red_dead, is_blue_dead = self.kill_bullet_and_spawn_explosions(blue_hit_bullets, red_hit_bullets)
-
-            # Отрисовка игроков
             self.red_warrior_group.draw(self.game.visual.screen)
             self.blue_warrior_group.draw(self.game.visual.screen)
 
             # Обработка смертей игроков
-            if is_blue_dead:
+            if not self.blue_warrior_group.sprite.isAlive:
                 self.game.game_stage = 'end'
                 self.winner = 'red'
-                self.blue_warrior_group.sprite.isAlive = False
 
-            if is_red_dead:
+            if not self.red_warrior_group.sprite.isAlive:
                 self.game.game_stage = 'end'
                 self.winner = 'blue'
-                self.red_warrior_group.sprite.isAlive = False
 
         elif self.game.game_stage == 'end':
 
@@ -126,25 +52,11 @@ class Battle:
             # Обработка выстрелов победителя
             if self.winner == 'red':
                 self.red_warrior_group.draw(self.game.visual.screen)
-                if blue_hit_bullets:
-                    self.kill_bullet_and_spawn_explosions(blue_hit_bullets, red_hit_bullets)
-
                 end_screen = self.game.visual.red_wins
-                red_shot = self.red_warrior_group.sprite.shots()
-
-                if red_shot:
-                    self.red_bullets_group.add(GunBullet(red_shot, 'bottom', self.game.visual))
 
             else:
                 self.blue_warrior_group.draw(self.game.visual.screen)
-                if red_hit_bullets:
-                    self.kill_bullet_and_spawn_explosions(red_hit_bullets, blue_hit_bullets)
-
                 end_screen = self.game.visual.blue_wins
-
-                blue_shot = self.blue_warrior_group.sprite.shots()
-                if blue_shot:
-                    self.blue_bullets_group.add(GunBullet(blue_shot, 'top', self.game.visual))
 
             # После победы, нужно выждать задержку, после появляется эндскрин, играется звук
             if not self.end_screen_delay:

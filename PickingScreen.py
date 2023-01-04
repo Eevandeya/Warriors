@@ -56,27 +56,32 @@ class PickingPanel:
         if self.picked:
             self.visual.screen.blit(self.visual.chosen_nickname_frame, (Constants.NICKNAME_FRAME_INDENT, line))
             if self.pointer == 1:
-                self.visual.screen.blit(self.visual.green_family_nicknames[self.pointer], (Constants.NICKNAME_INDENT + 32, line + 22))
+                self.visual.screen.blit(self.visual.green_family_nicknames[self.pointer],
+                                        (Constants.NICKNAME_INDENT + 32, line + 22))
             else:
-                self.visual.screen.blit(self.visual.green_family_nicknames[self.pointer], (Constants.NICKNAME_INDENT, line + 22))
+                self.visual.screen.blit(self.visual.green_family_nicknames[self.pointer],
+                                        (Constants.NICKNAME_INDENT, line + 22))
 
         else:
             self.visual.screen.blit(self.visual.empty_nickname_frame, (Constants.NICKNAME_FRAME_INDENT, line))
             if self.pointer == 1:
-                self.visual.screen.blit(self.visual.family_nicknames[self.pointer], (Constants.NICKNAME_INDENT + 32, line + 22))
+                self.visual.screen.blit(self.visual.family_nicknames[self.pointer],
+                                        (Constants.NICKNAME_INDENT + 32, line + 22))
             else:
-                self.visual.screen.blit(self.visual.family_nicknames[self.pointer], (Constants.NICKNAME_INDENT, line + 22))
-
+                self.visual.screen.blit(self.visual.family_nicknames[self.pointer],
+                                        (Constants.NICKNAME_INDENT, line + 22))
 
     def display_character_frames(self, line):
         for i in range(5):
             if i == self.pointer:
-                self.visual.screen.blit(self.visual.chosen_frame, (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
+                self.visual.screen.blit(self.visual.chosen_frame,
+                                        (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
             else:
-                self.visual.screen.blit(self.visual.empty_frame, (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
+                self.visual.screen.blit(self.visual.empty_frame,
+                                        (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
 
-            self.visual.screen.blit(self.visual.family[i], (i * Constants.GAP_BETWEEN_FRAMES + 46, line + 25))
-
+            self.visual.screen.blit(self.visual.family[i],
+                                    (i * Constants.GAP_BETWEEN_FRAMES + 46, line + 25))
 
     def update(self):
         if self.side == 'top':
@@ -108,7 +113,7 @@ class PickingScreen:
         if self.top_panel.picked and self.bottom_panel.picked and not self.countdown:
             self.countdown = True
             # Создание группы синего игрока
-            self.game.battle.red_warrior_group.add(Laser('bottom', self.bottom_panel.pointer, self.game.visual))
+            self.game.battle.red_warrior_group.add(Gunslinger('bottom', self.bottom_panel.pointer, self.game.visual))
             self.game.battle.blue_warrior_group.add(Gunslinger('top', self.top_panel.pointer, self.game.visual))
 
         if self.countdown:
@@ -116,4 +121,3 @@ class PickingScreen:
 
         if not self.start_timer:
             self.game.game_stage = 'battle'
-
