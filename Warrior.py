@@ -83,6 +83,7 @@ class BaseWarrior(pygame.sprite.Sprite):
 class Gunslinger(BaseWarrior):
     def __init__(self, game_side, character, visual):
         super().__init__(game_side, visual)
+        self.health = 30
 
         self.character = character
         self.image = visual.family[character]
@@ -106,6 +107,7 @@ class Gunslinger(BaseWarrior):
         self.bullet_speed = 8
 
         self.ammo = 5
+        self.damage = 1
 
         self.fire_delay_level = 0
         self.reload_delay_level = 0
@@ -191,13 +193,18 @@ class Laser(BaseWarrior):
         self.speed = 3
         self.heals = 3
         self.laser_gun = LaserGun(self, visual)
+        self.damage = 1
 
     def activate_laser(self, enemy, animations):
         keys = pygame.key.get_pressed()
 
         if keys[self.control_buttons['fire']]:
+
             if not self.is_top_side:
-                self.laser_gun.activate(enemy.rect.left, enemy.rect.right, enemy.rect.bottom)
+                hit = self.laser_gun.activate(enemy.rect.left, enemy.rect.right, enemy.rect.bottom)
+                if hit:
+                    enemy.get_damage(self.damage)
+
         else:
             self.laser_gun.melt_laser(animations)
 
@@ -210,4 +217,5 @@ class Laser(BaseWarrior):
         self.display_heals(self.hearts, self.stats_line_level)
 
         if self.health <= 0 and not self.death_played:
+            self.laser_gun.stop_playing_sounds()
             self.death(animations)

@@ -1,5 +1,7 @@
 import pygame
 from random import choice
+
+import Constants
 import Sounds
 from Animations import LaserMelting, BulletExplosion
 
@@ -48,10 +50,43 @@ class LaserGun:
         self.max_length = 10
         self.length = 0
         self.active = False
-        self.last_enemy_front = 0
+        self.damaging = False
+
+        self.sound_playing = False
+        self.sound_delay = Constants.FPS * 6 + 8
+        self.sound_delay_level = 0
+        self.damage_sound_delay = Constants.FPS * 2 - 20
+        self.damage_sound_delay_level = 0
+
+    def play_active_sound(self):
+        if not self.sound_delay_level:
+            Sounds.laser_sound.play()
+            self.sound_delay_level = self.sound_delay
+
+        else:
+            self.sound_delay_level -= 1
+
+    def play_damage_sound(self):
+        if self.damaging and not self.damage_sound_delay_level:
+            Sounds.laser_damage_sound.play()
+            self.damage_sound_delay_level = self.damage_sound_delay
+        if not self.damaging:
+            self.damage_sound_delay_level = 0
+            Sounds.laser_damage_sound.stop()
+        else:
+            self.damage_sound_delay_level -= 1
+
+    def stop_playing_sounds(self):
+        self.sound_delay_level = 0
+        self.damage_sound_delay_level = 0
+        Sounds.laser_sound.stop()
+        Sounds.laser_damage_sound.stop()
 
     def activate(self, enemy_left, enemy_right, enemy_front):
         self.active = True
+        self.play_active_sound()
+        self.play_damage_sound()
+
 
         if not self.warrior.is_top_side:
 
@@ -73,6 +108,9 @@ class LaserGun:
 
                 self.visual.screen.blit(self.visual.laser_on_player, (x - 5, enemy_front))
 
+                self.damaging = True
+                return True
+
             else:
                 self.length = self.max_length
                 y = self.warrior.rect.top - 20
@@ -84,9 +122,13 @@ class LaserGun:
 
                 self.visual.screen.blit(self.visual.laser_explosion, (x - 5, y - self.max_length * 20 + 10))
 
+                self.damaging = False
+                return False
+
     def melt_laser(self, animations_list):
         if self.active:
             self.active = False
+            self.stop_playing_sounds()
 
             if self.length == self.max_length or self.last_enemy_front == (self.warrior.rect.y - (self.length - 1) * 20):
                 front = 0

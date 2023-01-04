@@ -14,10 +14,11 @@ class Battle:
         self.blue_warrior_group = pygame.sprite.GroupSingle()
 
     def update_animations(self):
-        for animation in self.animations:
-            isdead = animation.display(self.game.visual)
-            if isdead:
-                self.animations.remove(animation)
+        if self.animations:
+            for animation in self.animations:
+                isdead = animation.display(self.game.visual)
+                if isdead:
+                    self.animations.remove(animation)
 
     def update(self):
         self.game.visual.screen.fill('#dcdcdc')
@@ -40,6 +41,8 @@ class Battle:
             if not self.red_warrior_group.sprite.isAlive:
                 self.game.game_stage = 'end'
                 self.winner = 'blue'
+
+            self.update_animations()
 
         elif self.game.game_stage == 'end':
 
@@ -65,6 +68,5 @@ class Battle:
             else:
                 self.end_screen_delay -= 1
 
-        # print(self.animations)
-        if self.animations:
             self.update_animations()
+
