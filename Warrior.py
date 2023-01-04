@@ -192,7 +192,7 @@ class Laser(BaseWarrior):
         self.heals = 3
         self.laser_gun = LaserGun(self, visual)
 
-    def shots(self, enemy, animations):
+    def activate_laser(self, enemy, animations):
         keys = pygame.key.get_pressed()
 
         if keys[self.control_buttons['fire']]:
@@ -204,7 +204,7 @@ class Laser(BaseWarrior):
     def update(self, enemy, animations):
         if self.isAlive:
             self.control()
-            self.shots(enemy, animations)
+            self.activate_laser(enemy, animations)
 
         self.display_ammo(5, self.stats_line_level)
         self.display_heals(self.hearts, self.stats_line_level)

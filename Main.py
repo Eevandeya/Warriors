@@ -8,9 +8,9 @@ class Game:
         pygame.init()
         self.clock = pygame.time.Clock()
         self.visual = Visual()
-        self.game_stage = 'pick'
         self.picking_screen = PickingScreen(self)
         self.battle = Battle(self)
+        self.game_stage = 'pick'
 
     def new_game(self):
         self.game_stage = 'pick'

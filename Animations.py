@@ -35,10 +35,11 @@ class PlayerExplosion(Animation):
 
 
 class LaserMelting(Animation):
-    def __init__(self, x, y, length):
-        super().__init__(x, y - 20)
+    def __init__(self, x, y, length, enemy_front):
+        super().__init__(x, y)
         self.length = length
         self.time = 5
+        self.enemy_front = enemy_front
 
     def display(self, visual):
         if self.lifetime <= self.time:
@@ -50,8 +51,12 @@ class LaserMelting(Animation):
         else:
             return True
 
+
         for i in range(self.length):
             visual.screen.blit(choice(frames), (self.x, self.y - i * 20))
+
+        if self.enemy_front:
+            visual.screen.blit(choice(frames), (self.x, self.enemy_front))
 
         self.lifetime += 1
 

@@ -48,26 +48,26 @@ class LaserGun:
         self.max_length = 10
         self.length = 0
         self.active = False
+        self.last_enemy_front = 0
 
     def activate(self, enemy_left, enemy_right, enemy_front):
         self.active = True
 
         if not self.warrior.is_top_side:
 
-            if self.warrior.rect.top - enemy_front <= 180 \
+            if self.warrior.rect.top - enemy_front <= 20*self.max_length \
                     and (self.warrior.rect.left + 12) < enemy_right \
                     and (self.warrior.rect.right - 12) > enemy_left:
 
                 y = self.warrior.rect.top - 20
                 x = self.warrior.rect.left + 13
                 dist = self.warrior.rect.top - enemy_front
-                self.length = dist // 20
-                i = self.length
 
-                while i != 0:
-                    self.visual.screen.blit(choice(self.laser_frames), (x, y))
-                    y -= 20
-                    i -= 1
+                self.length = dist // 20
+                self.last_enemy_front = enemy_front
+
+                for i in range(self.length):
+                    self.visual.screen.blit(choice(self.laser_frames), (x, y - i*20))
 
                 self.visual.screen.blit(choice(self.laser_frames), (x, enemy_front))
 
@@ -75,17 +75,23 @@ class LaserGun:
 
             else:
                 self.length = self.max_length
-                y = self.warrior.rect.top
-                x = self.warrior.rect.left + 13
-                n = self.max_length
-                while n != 0:
-                    self.visual.screen.blit(choice(self.laser_frames), (x, y))
-                    y -= 20
-                    n -= 1
+                y = self.warrior.rect.top - 20
+                x = self.warrior.rect.left + 12
 
-                self.visual.screen.blit(self.visual.laser_explosion, (x - 5, y + 10))
+
+                for i in range(self.max_length):
+                    self.visual.screen.blit(choice(self.laser_frames), (x, y - i*20))
+
+                self.visual.screen.blit(self.visual.laser_explosion, (x - 5, y - self.max_length * 20 + 10))
 
     def melt_laser(self, animations_list):
         if self.active:
             self.active = False
-            animations_list.append(LaserMelting(self.warrior.rect.left + 13, self.warrior.rect.top, self.length))
+
+            if self.length == self.max_length or self.last_enemy_front == (self.warrior.rect.y - (self.length - 1) * 20):
+                front = 0
+            else:
+                front = self.last_enemy_front
+
+            animations_list.append(LaserMelting(self.warrior.rect.left + 12,
+                                                self.warrior.rect.top - 20, self.length, front))
