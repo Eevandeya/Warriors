@@ -73,7 +73,7 @@ class Battle:
         self.blue_bullets_group.update()
 
         # Обновление игроков
-        self.red_warrior_group.update(self.game.screen)
+        self.red_warrior_group.update(self.game)
         self.blue_warrior_group.update(self.game.screen)
 
         # Получение списков пуль, которые попали
@@ -83,13 +83,13 @@ class Battle:
         if self.game.game_stage == 'battle':
 
             # Обработка выстрелов, если они есть
-            blue_shot = self.blue_warrior_group.sprite.warrior_shots()
-            red_shot = self.red_warrior_group.sprite.warrior_shots()
+            blue_shot = self.blue_warrior_group.sprite.shots()
+            # red_shot = self.red_warrior_group.sprite.shots()
 
             if blue_shot:
                 self.blue_bullets_group.add(GunBullet(blue_shot, 'top', self.game.screen))
-            if red_shot:
-                self.red_bullets_group.add(GunBullet(red_shot, 'bottom', self.game.screen))
+            # if red_shot:
+            #     self.red_bullets_group.add(GunBullet(red_shot, 'bottom', self.game.screen))
 
             # Если какие-то пули попали, уничтожение их, спавн взрывов
             # и начисление повреждений игрокам
@@ -130,7 +130,7 @@ class Battle:
                     self.kill_bullet_and_spawn_explosions(blue_hit_bullets, red_hit_bullets)
 
                 end_screen = self.game.screen.red_wins
-                red_shot = self.red_warrior_group.sprite.warrior_shots()
+                red_shot = self.red_warrior_group.sprite.shots()
 
                 if red_shot:
                     self.red_bullets_group.add(GunBullet(red_shot, 'bottom', self.game.screen))
@@ -142,7 +142,7 @@ class Battle:
 
                 end_screen = self.game.screen.blue_wins
 
-                blue_shot = self.blue_warrior_group.sprite.warrior_shots()
+                blue_shot = self.blue_warrior_group.sprite.shots()
                 if blue_shot:
                     self.blue_bullets_group.add(GunBullet(blue_shot, 'top', self.game.screen))
 

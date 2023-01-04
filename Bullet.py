@@ -30,3 +30,6 @@ class GunBullet(pygame.sprite.Sprite):
         else:
             if self.rect.y > self.border:
                 self.kill()
+
+
+Laser
