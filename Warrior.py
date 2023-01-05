@@ -83,14 +83,12 @@ class BaseWarrior(pygame.sprite.Sprite):
 class Gunslinger(BaseWarrior):
     def __init__(self, game_side, character, visual):
         super().__init__(game_side, visual)
-        self.health = 30
+        self.health = 200
 
         self.character = character
         self.image = visual.family[character]
 
-        self.hit_sound = Sounds.hit_sound
         self.shot_sound = Sounds.shot_sound
-        self.death_sound = Sounds.explosion_sound
 
         self.rect = self.image.get_rect(topleft=(self.start_x, self.start_y))
 
@@ -184,16 +182,19 @@ class Laser(BaseWarrior):
         self.character = character
         self.image = visual.family[character]
 
-        self.hit_sound = Sounds.hit_sound
-        self.shot_sound = Sounds.shot_sound
-        self.death_sound = Sounds.explosion_sound
-
         self.rect = self.image.get_rect(topleft=(self.start_x, self.start_y))
 
         self.speed = 3
-        self.health = 1000
+        self.health = 3
         self.laser_gun = LaserGun(self, visual)
         self.damage = 1
+
+        if self.is_top_side:
+            self.laser_sound = Sounds.laser_sound_1
+            self.laser_damage_sound = Sounds.laser_damage_sound_1
+        else:
+            self.laser_sound = Sounds.laser_sound_2
+            self.laser_damage_sound = Sounds.laser_damage_sound_2
 
     def activate_laser(self, enemy, animations):
         keys = pygame.key.get_pressed()

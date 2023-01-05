@@ -83,8 +83,6 @@ class Visual:
         self.empty_nickname_frame = pg.image.load('images/empty_nickname_frame.png').convert_alpha()
         self.chosen_nickname_frame = pg.image.load('images/chosen_nickname_frame.png').convert_alpha()
 
-        self.laser_beam = pg.image.load('images/laser_beam.png').convert_alpha()
-        self.laser_explosion = pg.image.load('images/laser_explosion.png').convert_alpha()
         self.laser_on_player = pg.image.load('images/player_to_laser.png').convert_alpha()
 
         self.laser_animation = [pg.image.load('images/laser_animation/active_laser/frame0.png').convert_alpha(),
@@ -116,3 +114,10 @@ class Visual:
              pg.image.load('images/laser_animation/laser_melting/stage_3/frame1.png').convert_alpha(),
              pg.image.load('images/laser_animation/laser_melting/stage_3/frame2.png').convert_alpha(),
              pg.image.load('images/laser_animation/laser_melting/stage_3/frame3.png').convert_alpha()]
+
+        self.laser_explosion_animation = [pg.image.load('images/laser_explosion_animation/frame0.png').convert_alpha(),
+                                          pg.image.load('images/laser_explosion_animation/frame1.png').convert_alpha(),
+                                          pg.image.load('images/laser_explosion_animation/frame2.png').convert_alpha(),
+                                          pg.image.load('images/laser_explosion_animation/frame3.png').convert_alpha(),
+                                          pg.image.load('images/laser_explosion_animation/frame4.png').convert_alpha(),
+                                          pg.image.load('images/laser_explosion_animation/frame5.png').convert_alpha()]
