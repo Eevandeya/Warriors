@@ -56,7 +56,7 @@ class Visual:
         self.papa = pg.image.load('images/family_warriors/yellow.png').convert_alpha()
         self.mama = pg.image.load('images/family_warriors/purple.png').convert_alpha()
 
-        self.family = [self.dada, self.kiki, self.vava, self.papa, self.mama]
+        self.warriors_textures = [self.dada, self.kiki, self.vava, self.papa, self.mama]
 
         self.pixel_font = pg.font.Font('font/Pixeltype.ttf', 100)
 
@@ -78,7 +78,6 @@ class Visual:
         self.family_nicknames = [dada_nickname, kiki_nickname, vava_nickname, papa_nickname, mama_nickname]
 
         self.win_fount = pg.font.Font('font/SFPixelate-Bold.ttf', 150)
-        self.names = ['dada', 'kiki', 'vava', 'papa', 'mama']
 
         self.empty_nickname_frame = pg.image.load('images/empty_nickname_frame.png').convert_alpha()
         self.chosen_nickname_frame = pg.image.load('images/chosen_nickname_frame.png').convert_alpha()

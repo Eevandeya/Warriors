@@ -80,7 +80,7 @@ class PickingPanel:
                 self.visual.screen.blit(self.visual.empty_frame,
                                         (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
 
-            self.visual.screen.blit(self.visual.family[i],
+            self.visual.screen.blit(self.visual.warriors_textures[i],
                                     (i * Constants.GAP_BETWEEN_FRAMES + 46, line + 25))
 
     def update(self):
@@ -105,6 +105,20 @@ class PickingScreen:
         self.countdown = False
         self.start_timer = 100
 
+    def create_warrior(self, side, pointer):
+        if pointer == 0:
+            return Gunslinger(side, self.game.visual)
+        elif pointer == 1:
+            return Laser(side, self.game.visual)
+        else:
+            return Gunslinger(side, self.game.visual)
+        # elif pointer == 2:
+        #     return
+        # elif pointer == 3:
+        #     return
+        # elif pointer == 4:
+        #     return
+
     def update(self):
         self.game.visual.screen.blit(self.game.visual.choosing_field, (0, 0))
         self.bottom_panel.update()
@@ -112,9 +126,9 @@ class PickingScreen:
 
         if self.top_panel.picked and self.bottom_panel.picked and not self.countdown:
             self.countdown = True
-            # Создание группы синего игрока
-            self.game.battle.red_warrior_group.add(Gunslinger('bottom', self.bottom_panel.pointer, self.game.visual))
-            self.game.battle.blue_warrior_group.add(Laser('top', self.top_panel.pointer, self.game.visual))
+
+            self.game.battle.red_warrior_group.add(self.create_warrior('bottom', self.bottom_panel.pointer))
+            self.game.battle.blue_warrior_group.add(self.create_warrior('top', self.top_panel.pointer))
 
         if self.countdown:
             self.start_timer -= 1

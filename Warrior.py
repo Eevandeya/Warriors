@@ -81,12 +81,10 @@ class BaseWarrior(pygame.sprite.Sprite):
 
 
 class Gunslinger(BaseWarrior):
-    def __init__(self, game_side, character, visual):
+    def __init__(self, game_side, visual):
         super().__init__(game_side, visual)
-        self.health = 200
 
-        self.character = character
-        self.image = visual.family[character]
+        self.image = visual.warriors_textures[0]
 
         self.shot_sound = Sounds.shot_sound
 
@@ -105,7 +103,8 @@ class Gunslinger(BaseWarrior):
         self.bullet_speed = 8
 
         self.ammo = 5
-        self.damage = 1
+        self.health = 200
+        self.damage = 50
 
         self.fire_delay_level = 0
         self.reload_delay_level = 0
@@ -163,7 +162,7 @@ class Gunslinger(BaseWarrior):
         if hit_bullets:
             for bullet in hit_bullets:
                 bullet.hit(animations, (enemy.health != 1))
-                enemy.get_damage(1)
+                enemy.get_damage(self.damage)
 
         if self.health <= 0 and not self.death_played:
             self.death(animations)
@@ -173,19 +172,18 @@ class Gunslinger(BaseWarrior):
 
 
 class Laser(BaseWarrior):
-    def __init__(self, game_side, character, visual):
+    def __init__(self, game_side, visual):
         super().__init__(game_side, visual)
 
         self.hearts = [visual.full_heart, visual.full_heart, visual.full_heart]
         self.empty_heart = visual.empty_heart
 
-        self.character = character
-        self.image = visual.family[character]
+        self.image = visual.warriors_textures[1]
 
         self.rect = self.image.get_rect(topleft=(self.start_x, self.start_y))
 
         self.speed = 3
-        self.health = 3
+        self.health = 200
         self.laser_gun = LaserGun(self, visual)
         self.damage = 1
 
