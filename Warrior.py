@@ -6,11 +6,8 @@ from Animations import PlayerExplosion
 
 
 class BaseWarrior(pygame.sprite.Sprite):
-    def __init__(self, game_side, visual):
+    def __init__(self, game_side, visual, health):
         super().__init__()
-
-        self.hearts = [visual.full_heart, visual.full_heart, visual.full_heart]
-        self.empty_heart = visual.empty_heart
 
         if game_side == 'top':
             self.borders = {'top': 159, 'bottom': 341, 'right': 512 - 9, 'left': 9}
@@ -34,7 +31,8 @@ class BaseWarrior(pygame.sprite.Sprite):
             self.start_y = 542 - 100
 
         self.speed = 3
-        self.health = 3
+        self.health = health
+        self.current_health = self.health
         self.isAlive = True
         self.visual = visual
         self.death_played = False
@@ -51,9 +49,29 @@ class BaseWarrior(pygame.sprite.Sprite):
         if keys[self.control_buttons['right']] and self.rect.right < self.borders['right']:
             self.rect.x += self.speed
 
-    def display_heals(self, hearts, line):
-        for i, heart in enumerate(hearts):
-            self.visual.screen.blit(heart, (i * Constants.GAP_BETWEEN_HEARTS + Constants.HEART_INDENT, line))
+    def display_heals(self):
+        if self.is_top_side:
+            x = Constants.TOP_HEALTH_BAR_X
+            y = Constants.TOP_HEALTH_BAR_Y
+        else:
+            x = Constants.BOTTOM_HEALTH_BAR_X
+            y = Constants.BOTTOM_HEALTH_BAR_Y
+
+        hp_percent = self.current_health / self.health
+        if hp_percent <= 0.2:
+            point = self.visual.red_health_point
+        elif hp_percent <= 0.5:
+            point = self.visual.yellow_health_point
+        else:
+            point = self.visual.green_health_point
+
+        health_points = int (hp_percent * 43)
+
+        for i in range(health_points):
+            self.visual.screen.blit(point, (x + (i + 1)*4, y + 4))
+
+        self.visual.screen.blit(self.visual.test_image, (x, y))
+        self.visual.screen.blit(self.visual.heart, (x - 20, y - 8))
 
     def display_ammo(self, ammo, line):
         number = 0
@@ -67,24 +85,22 @@ class BaseWarrior(pygame.sprite.Sprite):
             number += 1
 
     def get_damage(self, damage):
-        self.health -= damage
-        self.hearts.append(self.empty_heart)
-        self.hearts.pop(0)
+        self.current_health -= damage
 
     def death(self, animations):
         Sounds.explosion_sound.play()
         animations.append(PlayerExplosion(self.rect.x + 16, self.rect.y + 16))
-        self.rect.x = 500
-        self.rect.y = 500
+        self.rect.x = 512
+        self.rect.y = 512
         self.isAlive = False
         self.death_played = True
 
 
 class Gunslinger(BaseWarrior):
     def __init__(self, game_side, visual):
-        super().__init__(game_side, visual)
+        super().__init__(game_side, visual, 200)
 
-        self.image = visual.warriors_textures[0]
+        self.image = visual.gunslider_warrior[game_side]
 
         self.shot_sound = Sounds.shot_sound
 
@@ -103,8 +119,7 @@ class Gunslinger(BaseWarrior):
         self.bullet_speed = 8
 
         self.ammo = 5
-        self.health = 200
-        self.damage = 50
+        self.damage = 45
 
         self.fire_delay_level = 0
         self.reload_delay_level = 0
@@ -152,7 +167,7 @@ class Gunslinger(BaseWarrior):
             self.shooting()
 
         self.display_ammo(self.ammo, self.stats_line_level)
-        self.display_heals(self.hearts, self.stats_line_level)
+        self.display_heals()
 
         self.bullets_group.draw(self.visual.screen)
         self.bullets_group.update()
@@ -164,7 +179,7 @@ class Gunslinger(BaseWarrior):
                 bullet.hit(animations, (enemy.health != 1))
                 enemy.get_damage(self.damage)
 
-        if self.health <= 0 and not self.death_played:
+        if self.current_health <= 0 and not self.death_played:
             self.death(animations)
 
         if self.fire_delay_level:
@@ -173,19 +188,15 @@ class Gunslinger(BaseWarrior):
 
 class Laser(BaseWarrior):
     def __init__(self, game_side, visual):
-        super().__init__(game_side, visual)
+        super().__init__(game_side, visual, 200)
 
-        self.hearts = [visual.full_heart, visual.full_heart, visual.full_heart]
-        self.empty_heart = visual.empty_heart
-
-        self.image = visual.warriors_textures[1]
+        self.image = visual.laser_warrior[game_side]
 
         self.rect = self.image.get_rect(topleft=(self.start_x, self.start_y))
 
         self.speed = 3
-        self.health = 200
         self.laser_gun = LaserGun(self, visual)
-        self.damage = 1
+        self.damage = 2
 
         if self.is_top_side:
             self.laser_sound = Sounds.laser_sound_1
@@ -212,8 +223,8 @@ class Laser(BaseWarrior):
             self.activate_laser(enemy, animations)
 
         self.display_ammo(5, self.stats_line_level)
-        self.display_heals(self.hearts, self.stats_line_level)
+        self.display_heals()
 
-        if self.health <= 0 and not self.death_played:
+        if self.current_health <= 0 and not self.death_played:
             self.laser_gun.stop_playing_sounds()
             self.death(animations)

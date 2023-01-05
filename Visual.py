@@ -14,10 +14,7 @@ class Visual:
         self.blue_wins = pg.image.load('images/blue_wins.png').convert_alpha()
         self.red_wins = pg.image.load('images/red_wins.png').convert_alpha()
 
-        self.full_heart = pg.image.load('images/scene/full_heart.png').convert_alpha()
-        self.empty_heart = pg.image.load('images/scene/empty_heart.png').convert_alpha()
-
-        self.full_bullet = pg.image.load('images/scene/full_bullet_2.png')
+        self.full_bullet = pg.image.load('images/scene/full_bullet_2.png').convert_alpha()
         self.empty_bullet = pg.image.load('images/scene/empty_bullet_2.png').convert_alpha()
 
         self.chosen_frame = pg.image.load('images/chosen_frame.png').convert_alpha()
@@ -120,3 +117,15 @@ class Visual:
                                           pg.image.load('images/laser_explosion_animation/frame3.png').convert_alpha(),
                                           pg.image.load('images/laser_explosion_animation/frame4.png').convert_alpha(),
                                           pg.image.load('images/laser_explosion_animation/frame5.png').convert_alpha()]
+
+        self.test_image = pg.image.load('images/test3.png').convert_alpha()
+        self.red_health_point = pg.image.load('images/red_health_point2.png').convert_alpha()
+        self.yellow_health_point = pg.image.load('images/yellow_health_point.png').convert_alpha()
+        self.green_health_point = pg.image.load('images/green_health_point2.png').convert_alpha()
+        self.heart = pg.image.load('images/heart.png').convert_alpha()
+
+        self.gunslider_warrior = {'top': pg.image.load('images/blue_gunslider_warrior.png'),
+                                  'bottom': pg.image.load('images/red_gunslider_warrior.png')}
+
+        self.laser_warrior = {'top': pg.image.load('images/blue_laser_warrior.png'),
+                                  'bottom': pg.image.load('images/red_laser_warrior.png')}
