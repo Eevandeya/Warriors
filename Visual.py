@@ -81,13 +81,13 @@ class Visual:
 
         self.laser_on_player = pg.image.load('images/player_to_laser.png').convert_alpha()
 
-        self.laser_animation = [pg.image.load('images/laser_animation/active_laser/frame0.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/active_laser/frame1.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/active_laser/frame2.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/active_laser/frame3.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/active_laser/frame4.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/active_laser/frame5.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/active_laser/frame6.png').convert_alpha()]
+        self.laser_animation = [pg.image.load('images/laser_animation/blue_active_laser_2/frame0.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser_2/frame1.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser_2/frame2.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser_2/frame3.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser_2/frame4.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser_2/frame5.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser_2/frame6.png').convert_alpha()]
 
         self.laser_melting_stage_1 = \
             [pg.image.load('images/laser_animation/laser_melting/stage_1/frame0.png').convert_alpha(),

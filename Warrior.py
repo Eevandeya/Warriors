@@ -198,6 +198,13 @@ class Laser(BaseWarrior):
         self.laser_gun = LaserGun(self, visual)
         self.damage = 2
 
+        self.energy = 100
+        self.energy_level = self.energy
+
+        self.energy_reload_speed = 1
+        self.laser_delay = 15
+        self.laser_delay_level = 0
+
         if self.is_top_side:
             self.laser_sound = Sounds.laser_sound_1
             self.laser_damage_sound = Sounds.laser_damage_sound_1
@@ -205,24 +212,43 @@ class Laser(BaseWarrior):
             self.laser_sound = Sounds.laser_sound_2
             self.laser_damage_sound = Sounds.laser_damage_sound_2
 
-    def activate_laser(self, enemy, animations):
+    def reload(self):
+        if not self.laser_gun.active:
+            if self.energy_level < 100:
+                self.energy_level += self.energy_reload_speed
+
+            if self.laser_delay_level:
+                self.laser_delay_level -= 1
+
+            # print(self.laser_delay_level)
+
+    def laser_control(self, enemy, animations):
         keys = pygame.key.get_pressed()
 
-        if keys[self.control_buttons['fire']]:
+        if keys[self.control_buttons['fire']] and self.energy_level and not self.laser_delay_level:
             enemy_front = enemy.rect.top if self.is_top_side else enemy.rect.bottom
+
+            self.energy_level -= 1
+
             hit = self.laser_gun.activate(enemy.rect.left, enemy.rect.right, enemy_front)
             if hit:
                 enemy.get_damage(self.damage)
 
         else:
+            if self.laser_gun.active:
+                self.laser_delay_level = self.laser_delay
+
             self.laser_gun.melt_laser(animations)
 
     def update(self, enemy, animations):
         if self.isAlive:
             self.control()
-            self.activate_laser(enemy, animations)
+            self.laser_control(enemy, animations)
+            self.reload()
 
-        self.display_ammo(5, self.stats_line_level)
+        _bullets_ = int ((self.energy_level / self.energy) * 5)
+
+        self.display_ammo(_bullets_, self.stats_line_level)
         self.display_heals()
 
         if self.current_health <= 0 and not self.death_played:
