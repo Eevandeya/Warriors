@@ -1,7 +1,7 @@
 import Constants
 import pygame
 import Sounds
-from Warrior import Gunslinger, Laser
+from Warrior import Gunslinger, Laser, Komar, Machinegun
 
 
 class PickingPanel:
@@ -80,7 +80,7 @@ class PickingPanel:
                 self.visual.screen.blit(self.visual.empty_frame,
                                         (i * Constants.GAP_BETWEEN_FRAMES + Constants.FRAME_INDENT, line))
 
-            self.visual.screen.blit(self.visual.warriors_textures[i],
+            self.visual.screen.blit(self.visual.warriors_textures[i][self.side],
                                     (i * Constants.GAP_BETWEEN_FRAMES + 46, line + 25))
 
     def update(self):
@@ -110,12 +110,12 @@ class PickingScreen:
             return Gunslinger(side, self.game.visual)
         elif pointer == 1:
             return Laser(side, self.game.visual)
+        elif pointer == 2:
+            return Komar(side, self.game.visual)
+        elif pointer == 3:
+            return Machinegun(side, self.game.visual)
         else:
             return Gunslinger(side, self.game.visual)
-        # elif pointer == 2:
-        #     return
-        # elif pointer == 3:
-        #     return
         # elif pointer == 4:
         #     return
 

@@ -1,7 +1,7 @@
 import pygame
 import Constants
 import Sounds
-from Arsenal import LaserGun, GunBullet
+from Arsenal import LaserGun, GunBullet, Sting, Pellet
 from Animations import PlayerExplosion
 
 
@@ -107,7 +107,7 @@ class Gunslinger(BaseWarrior):
         self.rect = self.image.get_rect(topleft=(self.start_x, self.start_y))
 
         # Задержка между выстрелами
-        self.fire_delay = 10
+        self.fire_delay = 16
 
         # Задержка между выстрелами и перезарядкой
         # (Чтобы началась перезарядка, нужно подождать, не стреляя)
@@ -115,11 +115,9 @@ class Gunslinger(BaseWarrior):
 
         # Скорость перезарядки (больше - медленнее перезарядка)
         self.ammo_reload = 30
-
-        self.bullet_speed = 8
-
+        self.bullet_speed = 9
         self.ammo = 5
-        self.damage = 45
+        self.damage = 40
 
         self.fire_delay_level = 0
         self.reload_delay_level = 0
@@ -144,18 +142,13 @@ class Gunslinger(BaseWarrior):
 
     def reload(self):
 
-        # Проверка на то, что выдержана задержка между выстрелом и перезарядкой
         if self.reload_delay_level:
             self.reload_delay_level -= 1
         else:
 
-            # Проверка на то, что патрон меньше 5
             if self.ammo < 5:
-
-                # Перезарядка
                 self.ammo_reload_level += 1
 
-                # Увеличение патрон, если перезарядка на нужном уровне
                 if self.ammo_reload_level >= self.ammo_reload:
                     self.ammo += 1
                     self.ammo_reload_level = 0
@@ -196,13 +189,13 @@ class Laser(BaseWarrior):
 
         self.speed = 3
         self.laser_gun = LaserGun(self, visual)
-        self.damage = 2
+        self.damage = 3
 
-        self.energy = 100
+        self.energy = 150
         self.energy_level = self.energy
 
         self.energy_reload_speed = 1
-        self.laser_delay = 15
+        self.laser_delay = 30
         self.laser_delay_level = 0
 
         if self.is_top_side:
@@ -253,4 +246,159 @@ class Laser(BaseWarrior):
 
         if self.current_health <= 0 and not self.death_played:
             self.laser_gun.stop_playing_sounds()
+            self.death(animations)
+
+
+class Komar(BaseWarrior):
+    def __init__(self, game_side, visual):
+        super().__init__(game_side, visual, 150)
+
+        self.image = visual.komar_warrior[game_side]
+        self.rect = self.image.get_rect(topleft=(self.start_x, self.start_y))
+        self.speed = 3
+
+        self.fire_delay = 8
+        self.reload_delay = 15
+        self.ammo_reload = 50
+        self.ammo = 4
+        self.damage = 20
+
+        self.current_ammo = self.ammo
+        self.fire_delay_level = 0
+        self.reload_delay_level = 0
+        self.ammo_reload_level = 0
+
+        self.stings_group = pygame.sprite.Group()
+
+    def launch(self):
+        keys = pygame.key.get_pressed()
+
+        if keys[self.control_buttons['fire']]:
+            if not self.fire_delay_level and self.current_ammo:
+
+                self.current_ammo -= 1
+                self.fire_delay_level = self.fire_delay
+                self.reload_delay_level = self.reload_delay
+
+                Sounds.sting_launch.play()
+                self.stings_group.add(Sting((self.rect.x, self.rect.y), self.is_top_side, True, self.visual))
+                self.stings_group.add(Sting((self.rect.x, self.rect.y), self.is_top_side, False, self.visual))
+
+    def reload(self):
+
+        if self.reload_delay_level:
+            self.reload_delay_level -= 1
+        else:
+
+            if self.current_ammo < self.ammo:
+                self.ammo_reload_level += 1
+
+                if self.ammo_reload_level >= self.ammo_reload:
+                    self.current_ammo += 1
+                    self.ammo_reload_level = 0
+
+        if self.fire_delay_level:
+            self.fire_delay_level -= 1
+
+    def update(self, enemy, animations):
+        if self.isAlive:
+            self.control()
+            self.launch()
+            self.reload()
+
+        _bullets_ = int((self.current_ammo / self.ammo) * 5)
+        self.display_ammo(_bullets_, self.stats_line_level)
+        self.display_heals()
+
+        self.stings_group.update(enemy.rect.centerx, enemy.rect.bottom)
+        self.stings_group.draw(self.visual.screen)
+
+        hit_stings = pygame.sprite.spritecollide(enemy, self.stings_group, False)
+
+        if hit_stings:
+            for sting in hit_stings:
+                enemy.get_damage(self.damage)
+                sting.hit(animations)
+
+        if self.current_health <= 0 and not self.death_played:
+            self.death(animations)
+
+
+class Machinegun(BaseWarrior):
+    def __init__(self, game_side, visual):
+        super().__init__(game_side, visual, 225)
+
+        self.image = visual.machinegun_warrior[game_side]
+        self.rect = self.image.get_rect(topleft=(self.start_x, self.start_y))
+
+        self.fire_delay = 4
+
+        self.reload_delay = 10
+
+        self.ammo_reload = 7
+        self.pellet_speed = 7
+        self.ammo = 20
+        self.damage = 15
+
+        self.current_ammo = self.ammo
+        self.fire_delay_level = 0
+        self.reload_delay_level = 0
+        self.ammo_reload_level = 0
+
+        self.pellets_group = pygame.sprite.Group()
+    def fire(self):
+        keys = pygame.key.get_pressed()
+
+        if keys[self.control_buttons['fire']]:
+            if not self.fire_delay_level and self.current_ammo:
+
+                self.current_ammo -= 1
+                Sounds.pellet_shot.play()
+                self.fire_delay_level = self.fire_delay
+                self.reload_delay_level = self.reload_delay
+
+                self.pellets_group.add(Pellet((self.rect.x, self.rect.y), self.is_top_side, self.visual, self.pellet_speed ))
+
+    def reload(self):
+
+        if self.reload_delay_level:
+            self.reload_delay_level -= 1
+        else:
+
+            if self.current_ammo < self.ammo:
+                self.ammo_reload_level += 1
+
+                if self.ammo_reload_level >= self.ammo_reload:
+                    self.current_ammo += 1
+                    self.ammo_reload_level = 0
+
+        if self.fire_delay_level:
+            self.fire_delay_level -= 1
+
+    def update(self, enemy, animations):
+        if self.isAlive:
+            self.control()
+            self.reload()
+            self.fire()
+            # print(self.current_ammo)
+            # print(self.fire_delay_level)
+            # print(self.reload_delay_level)
+            # print(self.ammo_reload_level)
+            # print()
+
+        _bullets_ = int((self.current_ammo / self.ammo) * 5)
+        self.display_ammo(_bullets_, self.stats_line_level)
+        self.display_heals()
+
+        self.pellets_group.update()
+        self.pellets_group.draw(self.visual.screen)
+
+        hit_pellets = pygame.sprite.spritecollide(enemy, self.pellets_group, False)
+
+        if hit_pellets:
+            for sting in hit_pellets:
+                enemy.get_damage(self.damage)
+                sting.hit(animations)
+
+        if self.current_health <= 0 and not self.death_played:
             self.death(animations)

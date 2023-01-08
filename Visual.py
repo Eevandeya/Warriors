@@ -53,8 +53,6 @@ class Visual:
         self.papa = pg.image.load('images/family_warriors/yellow.png').convert_alpha()
         self.mama = pg.image.load('images/family_warriors/purple.png').convert_alpha()
 
-        self.warriors_textures = [self.dada, self.kiki, self.vava, self.papa, self.mama]
-
         self.pixel_font = pg.font.Font('font/Pixeltype.ttf', 100)
 
         dada_nickname = self.pixel_font.render('dada', False, Constants.BLACK)
@@ -81,13 +79,13 @@ class Visual:
 
         self.laser_on_player = pg.image.load('images/player_to_laser.png').convert_alpha()
 
-        self.laser_animation = [pg.image.load('images/laser_animation/blue_active_laser_2/frame0.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/blue_active_laser_2/frame1.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/blue_active_laser_2/frame2.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/blue_active_laser_2/frame3.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/blue_active_laser_2/frame4.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/blue_active_laser_2/frame5.png').convert_alpha(),
-                                pg.image.load('images/laser_animation/blue_active_laser_2/frame6.png').convert_alpha()]
+        self.laser_animation = [pg.image.load('images/laser_animation/blue_active_laser/frame0.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser/frame1.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser/frame2.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser/frame3.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser/frame4.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser/frame5.png').convert_alpha(),
+                                pg.image.load('images/laser_animation/blue_active_laser/frame6.png').convert_alpha()]
 
         self.laser_melting_stage_1 = \
             [pg.image.load('images/laser_animation/laser_melting/stage_1/frame0.png').convert_alpha(),
@@ -124,8 +122,23 @@ class Visual:
         self.green_health_point = pg.image.load('images/green_health_point2.png').convert_alpha()
         self.heart = pg.image.load('images/heart.png').convert_alpha()
 
-        self.gunslider_warrior = {'top': pg.image.load('images/blue_gunslider_warrior.png'),
-                                  'bottom': pg.image.load('images/red_gunslider_warrior.png')}
+        self.gunslider_warrior = {'top': pg.image.load('images/warriors/blue_gunslider_warrior.png').convert_alpha(),
+                                  'bottom': pg.image.load('images/warriors/red_gunslider_warrior.png').convert_alpha()}
 
-        self.laser_warrior = {'top': pg.image.load('images/blue_laser_warrior.png'),
-                                  'bottom': pg.image.load('images/red_laser_warrior.png')}
+        self.laser_warrior = {'top': pg.image.load('images/warriors/blue_laser_warrior.png').convert_alpha(),
+                                  'bottom': pg.image.load('images/warriors/red_laser_warrior.png').convert_alpha()}
+
+        self.machinegun_warrior = {'top': pg.image.load('images/warriors/blue_machinegun.png').convert_alpha(),
+                                   'bottom': pg.image.load('images/warriors/red_machingun.png').convert_alpha()}
+
+        self.komar_warrior = {'top': pg.image.load('images/warriors/blue_komar.png').convert_alpha(),
+                                  'bottom': pg.image.load('images/warriors/red_komar.png').convert_alpha()}
+
+        self.warriors_textures = [self.gunslider_warrior, self.laser_warrior, self.komar_warrior,
+                                  self.machinegun_warrior, self.gunslider_warrior]
+
+        self.red_sting = pg.image.load('images/red_sting_2.png').convert_alpha()
+        self.blue_sting = pg.image.load('images/blue_sting.png').convert_alpha()
+
+        self.red_pellet = pg.image.load('images/red_pellet.png').convert_alpha()
+        self.blue_pellet = pg.image.load('images/blue_pellet.png').convert_alpha()

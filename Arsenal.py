@@ -1,5 +1,5 @@
 import pygame
-from random import choice
+from random import choice, randint
 
 import Constants
 import Sounds
@@ -187,3 +187,126 @@ class LaserGun:
                                                 self.length,
                                                 enemy_front,
                                                 self.warrior.is_top_side))
+
+
+class Sting(pygame.sprite.Sprite):
+    def __init__(self, warrior_pos, is_top_side, is_left_launching, visual):
+        super().__init__()
+        warrior_x, warrior_y = warrior_pos
+        self.is_launching = True
+        self.y_speed = 0
+        self.is_top_side = is_top_side
+        self.correction = 0.1
+
+        if is_left_launching:
+            self.x_speed = 5
+            start_x = warrior_x + 24
+        else:
+            self.x_speed = -5
+            start_x = warrior_x
+
+        if is_top_side:
+            self.border = 512 + 30
+            self.y_speed_acceleration = 0.7  # *10 == self.y_speed
+            self.image = visual.blue_sting
+        else:
+            self.border = 30
+            self.y_speed_acceleration = -0.7  # *10 == self.y_speed
+            self.image = visual.red_sting
+
+        self.rect = self.image.get_rect(topleft=(start_x, warrior_y + 8))
+
+        self.is_left_launched = is_left_launching
+
+    def launching(self):
+        if self.is_left_launched:
+            self.x_speed -= 0.5
+        else:
+            self.x_speed += 0.5
+
+        self.y_speed += self.y_speed_acceleration
+
+        if not self.x_speed:
+            self.is_launching = False
+
+    def aiming(self, enemy_centerx, enemy_bottom):
+        if self.is_top_side:
+            if enemy_bottom < self.rect.top:
+                return
+        else:
+            if enemy_bottom > self.rect.bottom:
+                return
+
+        diff = enemy_centerx - self.rect.centerx
+        if diff == 0:
+            pass
+        elif diff > 0:
+            self.x_speed += self.correction
+        else:
+            self.x_speed -= self.correction
+
+    def hit(self, animations):
+        Sounds.sting_hit.play()
+        animations.append(BulletExplosion(self.rect.x, self.rect.y))
+        self.kill()
+
+    def update(self, enemy_centerx, enemy_bottom):
+        if self.is_launching:
+            self.launching()
+        else:
+            self.aiming(enemy_centerx, enemy_bottom)
+
+        self.rect.y += int(self.y_speed)
+        self.rect.x += int(self.x_speed)
+
+        self.destroy()
+
+    def destroy(self):
+        if not self.is_top_side:
+            if self.rect.y < self.border:
+                self.kill()
+        else:
+            if self.rect.y > self.border:
+                self.kill()
+
+
+class Pellet(pygame.sprite.Sprite):
+    def __init__(self, warrior_pos, is_top_side, visual, speed):
+        warrior_x, warrior_y = warrior_pos
+        super().__init__()
+        self.is_top_side = is_top_side
+        spread = 100
+        self.x_speed = randint(-spread, spread) / 100
+        self.x_pos = warrior_x + 13
+
+        if is_top_side:
+            self.image = visual.blue_pellet
+            self.speed = speed
+            self.border = 512 + 30
+
+        else:
+            self.image = visual.red_pellet
+            self.speed = -speed
+            self.border = 30
+
+        self.rect = self.image.get_rect(topleft=(warrior_x + 13, warrior_y))
+
+    def update(self):
+        self.rect.y += self.speed
+
+        self.x_pos += self.x_speed
+        self.rect.x = int(self.x_pos)
+        self.destroy()
+
+    def hit(self, animations):
+        Sounds.pellet_hit.play()
+        animations.append(BulletExplosion(self.rect.x, self.rect.y))
+        self.kill()
+
+    def destroy(self):
+        if not self.is_top_side:
+            if self.rect.y < self.border:
+                self.kill()
+        else:
+            if self.rect.y > self.border:
+                self.kill()
