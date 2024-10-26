@@ -23,7 +23,7 @@ class BaseWarrior(pygame.sprite.Sprite):
         elif game_side == 'bottom':
             self.borders = {'top': 351, 'bottom': 533, 'right': 512 - 9, 'left': 9}
             self.control_buttons = {'up': pygame.K_UP, 'down': pygame.K_DOWN, 'left': pygame.K_LEFT,
-                                    'right': pygame.K_RIGHT, 'fire': pygame.K_RCTRL}
+                                    'right': pygame.K_RIGHT, 'fire': pygame.K_SLASH}
 
             self.stats_line_level = Constants.BOTTOM_STAT_LINE
             self.is_top_side = False

@@ -10,7 +10,7 @@ class PickingPanel:
             self.control_buttons = {'left': pygame.K_a, 'right': pygame.K_d, 'pick': pygame.K_g}
 
         elif side == 'bottom':
-            self.control_buttons = {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'pick': pygame.K_RCTRL}
+            self.control_buttons = {'left': pygame.K_LEFT, 'right': pygame.K_RIGHT, 'pick': pygame.K_SLASH}
         else:
             print('Неверный параметр side при создании объекта класса PickingPanel. (top/bottom)')
             exit()
